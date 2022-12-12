@@ -31,22 +31,10 @@ Package support multiple auth guards.
 
 
 ## _Install Livewire Comments Package_
-Extract the files from the archive you have downloaded into a `packages` folder in your project root.
-[![Livewire Comments Package](https://i.ibb.co/vLgwXWK/image.png)](https://i.ibb.co/vLgwXWK/image.png)
-
-Edit your `composer.json` file and add a local path repository:
-```json
-"repositories": [
-    {
-        "type": "path",
-        "url": "./packages/*"
-    }
-]
-```
 
 **In your terminal run:**
 ```bash
-composer require vigstudio/livewire-comments *@dev
+composer require vigstudio/livewire-comments
 ```
 
 **Publish the assets files with:**
