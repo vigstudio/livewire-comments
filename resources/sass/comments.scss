@@ -1,0 +1,378 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import 'content.scss';
+@import 'plyr/dist/plyr.css';
+
+.disabled {
+    @apply bg-gray-100 cursor-not-allowed;
+}
+
+.vcomments-box {
+    @apply mb-4 w-full bg-white;
+
+    .vcomment-row {
+        @apply mb-6 text-base bg-gray-50 border  border-gray-200;
+
+        &.children {
+            @apply ml-3 mt-2 lg:ml-12;
+        }
+
+        &.active {
+            @apply border-l-4 bg-sky-100 border-sky-300;
+        }
+
+        .vgcomment__header {
+            @apply flex justify-between items-center px-4 py-2;
+
+            .author {
+                @apply flex justify-between items-center mr-3 text-sm text-gray-900 ;
+
+                .avatar {
+                    @apply m-1 mr-2 w-8 h-8 relative flex justify-center items-center rounded-full bg-gray-500 text-xl text-white;
+
+                    .avatar--image {
+                        @apply items-center object-cover w-12 h-12 border-2 border-gray-300 rounded-full;
+                    }
+
+                    .avatar--badge {
+                        @apply top-[80%] absolute inline-flex items-center rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800;
+                    }
+                }
+
+                .info {
+                    @apply ml-3 text-xs font-bold leading-tight;
+
+                    .time {
+                        @apply leading-5 text-gray-600 ;
+                    }
+
+                    .reply_text {
+                        @apply leading-3 italic subpixel-antialiased font-thin text-right text-gray-500 ;
+                    }
+                }
+            }
+
+            .dropdown {
+                @apply relative inline-block text-left;
+
+                .dropdown-menu {
+                    @apply absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none;
+
+                    .enter {
+                        @apply transition ease-out duration-100;
+                    }
+
+                    .enter_start {
+                        @apply transform opacity-0 scale-95;
+                    }
+
+                    .enter_end {
+                        @apply transform opacity-100 scale-100;
+                    }
+
+                    .leave {
+                        @apply transition ease-in duration-75;
+                    }
+
+                    .leave_start {
+                        @apply transform opacity-100 scale-100;
+                    }
+
+                    .leave_end {
+                        @apply transform opacity-0 scale-95;
+                    }
+                }
+
+                .dropdown-menu--item {
+                    @apply block px-4 py-2 text-sm text-gray-700;
+
+                    &.active {
+                        @apply bg-gray-100 text-gray-900;
+                    }
+                }
+            }
+        }
+
+        .vgcomment__body {
+            @apply px-6 py-4 bg-white min-h-[0px] font-light text-gray-800;
+
+            @include comment__formatter;
+
+        }
+
+        .vgcomment__footer {
+            @apply flex justify-between bg-white items-center py-2 px-4 border-b border-gray-200;
+
+            .vgcomment__reactions {
+                @apply flex items-center mt-4 space-x-4;
+
+                .reactions__group {
+                    @apply py-2 font-bold leading-tight;
+
+                    .emoji {
+                        @apply ml-1;
+                    }
+                    .text {
+                        @apply ml-1 font-black;
+                    }
+                }
+
+            }
+
+            .footer__tooltips-group {
+                @apply flex pl-0 space-x-1 sm:pl-2;
+
+                .footer__tooltips {
+                    @apply inline-flex text-sm justify-center p-1 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100;
+
+
+                }
+
+
+            }
+        }
+
+        .vgcomment__attachments {
+            @apply py-2 px-4 bg-white rounded-b-lg ;
+
+            .file {
+                @apply inline-flex justify-center text-xs items-center p-1.5 font-medium text-gray-500 bg-gray-50 rounded-lg hover:text-gray-900 hover:bg-gray-100;
+            }
+        }
+
+        .vgcomment__replybox {
+            @apply bg-white px-6 py-4;
+        }
+    }
+
+    .vpagination {
+        @apply flex items-center justify-between;
+
+        .mobile-mode {
+            @apply flex justify-between flex-1 sm:hidden;
+        }
+
+        .desktop-mode {
+            @apply hidden sm:flex-1 sm:flex sm:items-center sm:justify-between;
+        }
+    }
+}
+
+.vcomments__form {
+
+    @apply mb-4 w-full bg-gray-50 rounded-lg border border-gray-200;
+
+    .form__header {
+        @apply flex justify-between items-center py-2 px-3 border-b;
+
+        .header__tooltips-group {
+            @apply flex flex-wrap items-center;
+
+            .header__group {
+                @apply flex items-center space-x-1 sm:pr-4;
+            }
+        }
+    }
+
+    .form__body {
+        @apply py-2 px-4 bg-white rounded-b-lg ;
+
+        .form__body--preview {
+            @apply px-0 py-1 bg-white min-h-[100px] font-light text-gray-500;
+
+            @include comment__formatter;
+        }
+
+        .form__textarea {
+            @apply block px-0 w-full bg-white text-gray-500 border-0 focus:ring-0 ;
+
+            &.disabled {
+                @apply bg-gray-100 cursor-not-allowed;
+            }
+        }
+
+    }
+
+    .form__attachments {
+        @apply py-2 px-4 bg-white rounded-b-lg ;
+
+        .file {
+            @apply inline-flex justify-center text-xs items-center p-1.5 font-medium text-gray-500 bg-gray-50 rounded-lg hover:text-gray-900 hover:bg-gray-100;
+        }
+    }
+
+    .form__footer {
+        @apply flex justify-between items-center py-2 px-3 border-t;
+
+        .footer__tooltips-group {
+            @apply flex pl-0 space-x-1 sm:pl-2;
+
+            .footer__tooltips {
+                @apply inline-flex text-xs justify-center p-1 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100;
+
+                .footer__tooltips--text {
+                    @apply pl-2 hidden md:flex;
+                }
+            }
+        }
+    }
+
+    .validate-error {
+        @apply border-2 border-red-300;
+    }
+}
+
+.vcomments__btn {
+    @apply inline-flex items-center py-2 px-2 text-xs font-medium text-center;
+
+    &.disabled {
+        @apply cursor-not-allowed bg-gray-600 text-white;
+    }
+
+    &.primary {
+        @apply text-white bg-blue-700 hover:bg-blue-400 hover:text-gray-900 rounded-lg focus:ring-1 focus:ring-blue-200;
+    }
+
+    &.danger {
+        @apply text-white bg-red-700 hover:bg-red-400 hover:text-gray-900 rounded-lg focus:ring-1 focus:ring-blue-200;
+    }
+
+    &.primary-tone {
+        @apply text-blue-900 bg-blue-100 rounded-lg focus:ring-1 focus:ring-blue-600;
+    }
+
+    &.secondary {
+        @apply text-gray-700 bg-gray-200 rounded-lg focus:ring-1 focus:ring-gray-200;
+    }
+
+    &.none {
+        @apply text-gray-700 bg-gray-50 hover:bg-white rounded-lg focus:ring-1 focus:ring-gray-200;
+    }
+
+    &.active {
+        @apply text-gray-700 bg-purple-300 hover:bg-white rounded-lg focus:ring-1 focus:ring-gray-200;
+    }
+}
+
+.vgcomments_alert {
+
+    @apply pointer-events-none z-50 fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6;
+
+    .vg__container {
+        @apply flex w-full flex-col items-center space-y-4 sm:items-end;
+
+        .enter {
+            @apply transform ease-out duration-300 transition;
+        }
+
+        .enter_start {
+            @apply translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2;
+        }
+
+        .enter_end {
+            @apply translate-y-0 opacity-100 sm:translate-x-0;
+        }
+
+        .leave {
+            @apply transition ease-in duration-100;
+        }
+
+        .start {
+            @apply opacity-100;
+        }
+
+        .end {
+            @apply opacity-0;
+        }
+
+
+        .vg__body {
+            @apply pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5;
+
+            .vg__content {
+                @apply flex items-start;
+
+                .vg__message {
+                    @apply ml-3 w-0 flex-1 pt-0.5;
+                }
+
+                .vg_toolkit {
+                    @apply ml-4 flex flex-shrink-0;
+                }
+            }
+        }
+    }
+}
+
+.vgcomment_modal {
+    @apply relative z-10;
+
+    .modal__background {
+        @apply fixed inset-0 bg-gray-100 bg-opacity-75 transition-opacity;
+
+        .enter {
+            @apply ease-out duration-300;
+        }
+
+        .enter_start {
+            @apply opacity-0;
+        }
+
+        .enter_end {
+            @apply opacity-100;
+        }
+
+        .leave {
+            @apply ease-in duration-200;
+        }
+
+        .leave_start {
+            @apply opacity-100;
+        }
+
+        .leave_end {
+            @apply opacity-0;
+        }
+    }
+
+    .modal__container {
+        @apply fixed inset-0 z-10 overflow-y-auto;
+
+        .modal__card {
+            @apply flex items-end justify-center p-4 text-center sm:items-center sm:p-0;
+
+            .enter {
+                @apply ease-out duration-300;
+            }
+
+            .enter_start {
+                @apply opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95;
+            }
+
+            .enter_end {
+                @apply opacity-100 translate-y-0 sm:scale-100;
+            }
+
+            .leave {
+                @apply ease-in duration-200;
+            }
+
+            .leave_start {
+                @apply opacity-100 translate-y-0 sm:scale-100;
+            }
+
+            .leave_end {
+                @apply opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95;
+            }
+
+            .card__body {
+                @apply relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-screen-lg sm:p-6;
+
+                .image {
+                    @apply object-contain min-w-[200px] w-full;
+                }
+            }
+        }
+    }
+}
