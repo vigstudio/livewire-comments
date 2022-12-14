@@ -31,6 +31,7 @@ class FormComponent extends Component
         'author_url' => null,
         'root_id' => null,
         'parent_id' => null,
+        'recaptcha_token' => null,
     ];
 
     //Clipboard File Data
@@ -83,6 +84,7 @@ class FormComponent extends Component
         if ($result) {
             CommentServiceFacade::registerFilesForComment($result, $this->attachments);
             $this->request['content'] = '';
+            $this->request['recaptcha_token'] = '';
 
             $this->reset('preview');
 

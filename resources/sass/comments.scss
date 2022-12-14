@@ -3,6 +3,11 @@
 @tailwind utilities;
 @import 'content.scss';
 @import 'plyr/dist/plyr.css';
+@import 'highlight.js/styles/vs2015.css';
+
+.grecaptcha-badge {
+    visibility: hidden;
+}
 
 .disabled {
     @apply bg-gray-100 cursor-not-allowed;

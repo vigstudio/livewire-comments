@@ -1,5 +1,6 @@
 import { createPopup } from '@picmo/popup-picker';
 import Plyr from 'plyr';
+import hljs from 'highlight.js';
 
 window.LivewireComments = {},
     window.LivewireComments.form = function (id, $wire) {
@@ -22,7 +23,6 @@ window.LivewireComments = {},
                 this.textarea.addEventListener("input", function (event) {
                     self.setTextAreaLength(this.value.length);
                 });
-
             },
             setTextAreaLength: function (length) {
                 this.textarea_length = length;
@@ -147,7 +147,7 @@ window.LivewireComments = {},
                 }
 
                 return str
-            }
+            },
         }
 
     },
@@ -192,7 +192,7 @@ window.LivewireComments = {},
             },
         }
     },
-    window.LivewireComments.lightBox = function () {
+    window.LivewireComments.content = function () {
         return {
             init() {
 
@@ -205,6 +205,11 @@ window.LivewireComments = {},
                 this.$el.querySelectorAll(".vgcomments-player").forEach((function (video) {
                     new Plyr(video, {});
                 }))
+
+                this.$el.querySelectorAll('pre code').forEach((el) => {
+                    hljs.highlightElement(el);
+                });
+
 
             }
         }

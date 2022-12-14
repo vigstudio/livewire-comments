@@ -23,6 +23,7 @@
         "tailwindcss": "^3.1.8"
     },
     "dependencies": {
+        "highlight.js": "^11.7.0",
         "plyr": "^3.7.3"
     }
 }
