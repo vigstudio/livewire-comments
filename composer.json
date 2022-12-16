@@ -8,7 +8,7 @@
     "homepage": "https://github.com/vigstudio/livewire-comments",
     "license": "MIT",
     "type": "laravel-library",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "authors": [
         {
             "name": "Nghiane.com",
@@ -18,7 +18,7 @@
     ],
     "require": {
         "php": "^8.0",
-        "vigstudio/vgcomments": "^1.0.0",
+        "vigstudio/vgcomments": "^1.0.2",
         "livewire/livewire": "^2.10.7",
         "archielite/laravel-heroicons": "^0.1.1"
     },

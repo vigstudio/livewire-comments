@@ -210,7 +210,6 @@ window.LivewireComments = {},
                     hljs.highlightElement(el);
                 });
 
-
             }
         }
     },

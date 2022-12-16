@@ -6,22 +6,26 @@
 - [Live Demo](https://vgcomment.nghiane.com/)
 
 ## _Features_
-- [✓] Add comments to any model
-- [✓] Multiple comment systems on the same page
-- [✓] Multiple auth guards
-- [✓] Drag and drop, copy and paste upload files
-- [✓] reCaptcha v3 support
-- [✓] Emoji support
-- [✓] Markdown support
-- [✓] NSFW check support
-- [x] Mention support
-- [x] Admin Settings Panel
+- [x] Add comments to any model
+- [x] Multiple comment systems on the same page
+- [x] Multiple auth guards
+- [x] Drag and drop, copy and paste upload files
+- [x] reCaptcha v3 support
+- [x] Emoji support
+- [x] Markdown support
+- [x] NSFW image upload check support
 
 ## _Packages_
 - [Livewire](https://laravel-livewire.com/docs/2.x/installation)
 - [AlpineJs](https://alpinejs.dev/essentials/installation)
 - [Heroicons Blade Components](https://github.com/archielite/laravel-heroicons)
 - [VgComments](https://github.com/vigstudio/vgcomments)
+- [TailwindCss](https://tailwindcss.com)
+- [Plyr](https://plyr.io)
+- [highlight.js](https://highlightjs.org)
+- [picmo](https://picmojs.com)
+- [Laravel Mix](https://github.com/laravel-mix/laravel-mix)
+- [Laravel Echo](https://laravel.com/docs/9.x/broadcasting#installing-laravel-echo)
 
 ## _Introduction_
 Package use Macroable trait to add comments to any model. It uses Livewire and AlpineJs to create a comment system with a lot of features.
