@@ -68,11 +68,11 @@
                         @apply transition ease-out duration-100;
                     }
 
-                    .enter_start {
+                    .enter-start {
                         @apply transform opacity-0 scale-95;
                     }
 
-                    .enter_end {
+                    .enter-end {
                         @apply transform opacity-100 scale-100;
                     }
 
@@ -80,11 +80,11 @@
                         @apply transition ease-in duration-75;
                     }
 
-                    .leave_start {
+                    .leave-start {
                         @apply transform opacity-100 scale-100;
                     }
 
-                    .leave_end {
+                    .leave-end {
                         @apply transform opacity-0 scale-95;
                     }
                 }

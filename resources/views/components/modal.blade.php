@@ -31,15 +31,12 @@
                      @click.away="open = false">
 
                     <div class="text-right">
-                        <button x-on:click="open = false"
-                                type="button"
-                                class="vcomments__btn none">
+                        <button x-on:click="open = false" type="button" class="vcomments__btn none">
                             <x-heroicons::icon name="x-mark-o" />
                         </button>
                     </div>
 
-                    <img class="image"
-                         :src="src">
+                    <img class="image" :src="src">
                 </div>
             </div>
         </div>

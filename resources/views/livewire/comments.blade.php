@@ -2,6 +2,7 @@
 
     <x-livewire-comments::modal />
     <x-livewire-comments::alert />
+    <x-livewire-comments::confirm />
 
     <livewire:livewire-comments::form
                                       method="submit"

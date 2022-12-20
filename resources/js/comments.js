@@ -1,4 +1,4 @@
-import { createPopup } from '@picmo/popup-picker';
+import {createPopup} from '@picmo/popup-picker';
 import Plyr from 'plyr';
 import hljs from 'highlight.js';
 
@@ -198,7 +198,7 @@ window.LivewireComments = {},
 
                 this.$el.querySelectorAll("img").forEach((function (img) {
                     img.addEventListener("click", function (e) {
-                        window.dispatchEvent(new CustomEvent('lightbox-modal', { detail: this }));
+                        window.dispatchEvent(new CustomEvent('lightbox-modal', {detail: this}));
                     });
                 }))
 
@@ -213,7 +213,8 @@ window.LivewireComments = {},
             }
         }
     },
-    window.LivewireComments.menu = function (e = { open: !1 }) {
+    window.LivewireComments.menu = function (e = {open: !1}) {
+        let t = useTrackedPointer();
         return {
             init() {
                 this.items = Array.from(this.$el.querySelectorAll('[role="menuitem"]')), this.$watch("open", (() => {
@@ -250,6 +251,15 @@ window.LivewireComments = {},
                     const t = ["[contentEditable=true]", "[tabindex]", "a[href]", "area[href]", "button:not([disabled])", "iframe", "input:not([disabled])", "select:not([disabled])", "textarea:not([disabled])"].map((e => `${e}:not([tabindex='-1'])`)).join(",");
                     this.open = !1, e.target.closest(t) || this.focusButton()
                 }
+            },
+            onMouseEnter(e) {
+                t.update(e)
+            },
+            onMouseMove(e, n) {
+                t.wasMoved(e) && (this.activeIndex = n)
+            },
+            onMouseLeave(e) {
+                t.wasMoved(e) && (this.activeIndex = -1)
             }
         }
     };
@@ -259,6 +269,20 @@ window.livewire.on('alert', data => {
     const type = data[0].toString();
     const message = data[1];
 
-    window.dispatchEvent(new CustomEvent('alert', { detail: { type: type, title: type, message: message } }));
+    window.dispatchEvent(new CustomEvent('alert', {detail: {type: type, title: type, message: message}}));
 });
 
+
+
+function useTrackedPointer() {
+    let e = [-1, -1];
+    return {
+        wasMoved(t) {
+            let n = [t.screenX, t.screenY];
+            return (e[0] !== n[0] || e[1] !== n[1]) && (e = n, !0)
+        },
+        update(t) {
+            e = [t.screenX, t.screenY]
+        }
+    }
+}

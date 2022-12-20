@@ -31,6 +31,7 @@ class CommentsComponent extends Component
         return [
             'post-success-comments' => 'listenCommentPosted',
             'cancel-edit' => 'listenCancelEdit',
+            'confirm-submit' => 'confirmAction',
         ];
     }
 
@@ -57,6 +58,19 @@ class CommentsComponent extends Component
         return view('livewire-comments::livewire.comments');
     }
 
+    public function checkPermission($id, $action): bool
+    {
+        $comment = CommentServiceFacade::findById($id);
+
+        if (! $comment || ! vgcomment_policy($comment->id, $action)) {
+            session()->push('alert', ['error', trans('vgcomment::validation.errors.not_authorized')]);
+
+            return false;
+        }
+
+        return true;
+    }
+
     public function react(string $uuid, string $type)
     {
         CommentServiceFacade::reaction($uuid, $type);
@@ -66,22 +80,50 @@ class CommentsComponent extends Component
     {
         $comment = CommentServiceFacade::findById($id);
 
-        if (! $comment || ! vgcomment_policy($comment->id, 'update')) {
-            session()->push('alert', ['error', trans('vgcomment::validation.errors.not_authorized')]);
-
-            return false;
-        }
+        $this->checkPermission($id, 'update');
 
         $this->editId = $comment->uuid;
 
         return true;
     }
 
-    public function delete($id)
+    public function confirmAction($id, $action)
     {
-        $comment = CommentServiceFacade::findById($id);
+        if ($action == 'delete') {
+            $this->delete($id, 'delete');
+        }
 
-        CommentServiceFacade::delete($comment->uuid);
+        if ($action == 'report') {
+            $this->report($id, 'report');
+        }
+    }
+
+    public function report(string $id, $action = 'alert')
+    {
+        $this->checkPermission($id, 'report');
+
+        if ($action == 'alert') {
+            $this->dispatchBrowserEvent('confirm-action', ['id' => $id, 'message' => trans('vgcomment::comment.report_confirm'), 'action' => 'report']);
+        }
+
+        if ($action == 'report') {
+            $comment = CommentServiceFacade::findById($id);
+            CommentServiceFacade::report($comment->uuid);
+        }
+    }
+
+    public function delete($id, $action = 'alert')
+    {
+        $this->checkPermission($id, 'delete');
+
+        if ($action == 'alert') {
+            $this->dispatchBrowserEvent('confirm-action', ['id' => $id, 'message' => trans('vgcomment::comment.delete_confirm'), 'action' => 'delete']);
+        }
+
+        if ($action == 'delete') {
+            $comment = CommentServiceFacade::findById($id);
+            CommentServiceFacade::delete($comment->uuid);
+        }
     }
 
     public function listenCommentPosted($result)

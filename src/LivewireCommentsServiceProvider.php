@@ -16,7 +16,7 @@ class LivewireCommentsServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'livewire-comments');
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
 
-        Config::set(['livewire.temporary_file_upload.rules' => Config::get('vgcomment.upload_rules.rules')]);
+        Config::set(['livewire.temporary_file_upload.rules' => Config::get('vgcomment.upload_rules')]);
     }
 
     /**
