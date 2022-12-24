@@ -22,6 +22,7 @@ class CommentsComponent extends Component
         'page_id' => null,
         'commentable_type' => null,
         'commentable_id' => null,
+        'order' => 'latest',
     ];
 
     protected $queryString = [];

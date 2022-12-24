@@ -10,7 +10,7 @@
         <div class="author">
             <div class="avatar">
                 <img class="avatar__image"
-                     src="{{ $comment->avatar_url }}"
+                     src="{{ $comment->author_avatar }}"
                      alt="{{ $comment->author_name }}">
                 {{-- <span class="avatar--badge">Admin</span> --}}
             </div>
