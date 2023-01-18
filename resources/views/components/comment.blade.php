@@ -178,8 +178,8 @@
 
         <livewire:livewire-comments::form method="submit"
                                           :wire:key="'form-'.$comment->id"
-                                          :commentable="$comment->commentable" :
-                                          pageId="$comment->page_id"
+                                          :commentable="$comment->commentable"
+                                          :pageId="$comment->page_id"
                                           :request="['root_id' => $comment->root_id ? $comment->root_id : $comment->id, 'parent_id' => $comment->id]" />
     </div>
 

@@ -35,6 +35,5 @@
     <x-livewire-comments::alert />
     <x-livewire-comments::confirm />
 
-
     <script src="https://www.google.com/recaptcha/api.js?render={{ Config::get('vgcomment.recaptcha_key') }}"></script>
 </div>

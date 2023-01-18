@@ -29,10 +29,16 @@ class CommentsComponent extends Component
 
     protected function getListeners()
     {
+        $commentable_id = ! empty($this->commentable) ? $this->commentable['id'] : null;
+        $commentable_type = ! empty($this->commentable) ? get_class($this->commentable) : null;
+
+        $hash = vgcomment_page_hash($this->pageId, $commentable_id, $commentable_type);
+
         return [
             'post-success-comments' => 'listenCommentPosted',
             'cancel-edit' => 'listenCancelEdit',
             'confirm-submit' => 'confirmAction',
+            "echo:vgcomment_{$hash},.BroadcastCommentCreatedEvent" => 'listenEchoCommentPosted',
         ];
     }
 
@@ -144,5 +150,10 @@ class CommentsComponent extends Component
     public function paginationView()
     {
         return 'livewire-comments::pagination';
+    }
+
+    public function listenEchoCommentPosted($event)
+    {
+        $comment = CommentServiceFacade::findById($event['comment']['id']);
     }
 }
