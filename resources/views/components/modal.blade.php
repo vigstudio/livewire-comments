@@ -6,7 +6,8 @@
 
     <div @lightbox-modal.window="open = true; src = $event.detail.src;"
          @keydown.window.escape="open = false"
-         x-show="open">
+         x-show="open"
+         style="display: none;">
 
         <div x-show="open"
              x-transition:enter="enter"

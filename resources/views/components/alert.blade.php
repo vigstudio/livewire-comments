@@ -13,7 +13,8 @@
              x-transition:leave="leave"
              x-transition:leave-start="start"
              x-transition:leave-end="end"
-             class="vg__body">
+             class="vg__body"
+             style="display: none;">
             <div class="p-4">
                 <div class="vg__content">
                     <x-heroicons::icon x-show="type == 'success'"

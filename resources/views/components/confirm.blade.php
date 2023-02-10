@@ -4,7 +4,8 @@
      aria-labelledby="modal-title"
      x-ref="dialog"
      aria-modal="true"
-     @confirm-action.window="open = true; action = $event.detail.action; message = $event.detail.message; id = $event.detail.id;">
+     @confirm-action.window="open = true; action = $event.detail.action; message = $event.detail.message; id = $event.detail.id;"
+     style="display: none;">
 
     <div x-show="open"
          x-transition:enter="ease-out duration-300"

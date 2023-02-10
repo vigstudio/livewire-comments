@@ -1,5 +1,11 @@
 <div class="vcomments-box">
 
+    <div wire:ignore>
+        <x-livewire-comments::modal />
+        <x-livewire-comments::alert />
+        <x-livewire-comments::confirm />
+    </div>
+
     <div class="flex justify-between items-center mb-6 border-b-2 border-gray-400 px-4">
         <h2 class="text-lg lg:text-2xl font-bold text-gray-900">
             {{ __('vgcomment::comment.discussion') }} ({{ $this->comments->total() }})
@@ -30,10 +36,6 @@
         {{ $this->comments->links() }}
     </div>
 
-
-    <x-livewire-comments::modal />
-    <x-livewire-comments::alert />
-    <x-livewire-comments::confirm />
 
     <script src="https://www.google.com/recaptcha/api.js?render={{ Config::get('vgcomment.recaptcha_key') }}"></script>
 </div>

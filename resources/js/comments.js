@@ -225,13 +225,13 @@ window.LivewireComments = {},
             activeIndex: null,
             items: null,
             open: e.open,
-            focusButton() {
-                this.$refs.button.focus()
-            },
             onButtonClick() {
                 this.open = !this.open, this.open && this.$nextTick((() => {
-                    this.$refs["menu-items"].focus()
-                }))
+                    this.$refs["menu-items"].focus();
+                    this.$refs["menu-items"].setAttribute("x-show", this.open);
+                }));
+
+
             },
             onButtonEnter() {
                 this.open = !this.open, this.open && (this.activeIndex = 0, this.activeDescendant = this.items[this.activeIndex].id, this.$nextTick((() => {
@@ -249,8 +249,9 @@ window.LivewireComments = {},
             onClickAway(e) {
                 if (this.open) {
                     const t = ["[contentEditable=true]", "[tabindex]", "a[href]", "area[href]", "button:not([disabled])", "iframe", "input:not([disabled])", "select:not([disabled])", "textarea:not([disabled])"].map((e => `${e}:not([tabindex='-1'])`)).join(",");
-                    this.open = !1, e.target.closest(t) || this.focusButton()
+                    this.open = !1, e.target.closest(t);
                 }
+                this.$refs["menu-items"].setAttribute("x-show", this.open);
             },
             onMouseEnter(e) {
                 t.update(e)

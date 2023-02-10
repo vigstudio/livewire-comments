@@ -6,7 +6,13 @@
      x-init="emojiPicker('.emoji-button')"
      x-bind:class="{ 'active': window.location.hash == '#vgcomment-{{ $comment->uuid }}' }">
 
-    <div class="vgcomment__header">
+    <div class="vgcomment__header"
+         x-data="LivewireComments.menu({ open: false })"
+         x-init="init()"
+         :id="$id('dropdown-menu')"
+         @keydown.escape.stop="open = false;"
+         @click.away="onClickAway($event)">
+
         <div class="author">
             <div class="avatar">
                 <img class="avatar__image"
@@ -35,11 +41,7 @@
             </div>
         </div>
 
-        <div x-data="LivewireComments.menu({ open: false })"
-             x-init="init()"
-             @keydown.escape.stop="open = false; focusButton()"
-             @click.away="onClickAway($event)"
-             class="dropdown">
+        <div class="dropdown">
 
             <div>
                 <button
@@ -47,7 +49,7 @@
                         class="flex items-center rounded-full vcomments__btn none"
                         id="menu-button"
                         x-ref="button"
-                        @click="onButtonClick()"
+                        @click="onButtonClick();"
                         @keyup.space.prevent="onButtonEnter()"
                         @keydown.enter.prevent="onButtonEnter()"
                         aria-expanded="true"
@@ -59,7 +61,6 @@
                     <x-heroicons::icon name="ellipsis-vertical-s" class="w-4 h-4" />
                 </button>
             </div>
-
 
             <div x-show="open"
                  x-transition:enter="enter"
@@ -79,50 +80,56 @@
                  @keydown.arrow-up.prevent="onArrowUp()"
                  @keydown.arrow-down.prevent="onArrowDown()"
                  @keydown.tab="open = false"
-                 @keydown.enter.prevent="open = false; focusButton()"
-                 @keyup.space.prevent="open = false; focusButton()">
+                 @keydown.enter.prevent="open = false;"
+                 @keyup.space.prevent="open = false;"
+                 style="display: none;">
 
                 <div class="py-1" role="none">
-                    <a href="javascript:void(0);" class="dropdown-menu--item"
-                       x-state:on="Active"
-                       x-state:off="Not Active"
-                       :class="{ 'bg-gray-100 text-gray-900': activeIndex === 0, 'text-gray-700': !(activeIndex === 0) }"
-                       role="menuitem"
-                       tabindex="-1"
-                       id="menu-item-0"
-                       @mouseenter="onMouseEnter($event)"
-                       @mousemove="onMouseMove($event, 0)"
-                       @mouseleave="onMouseLeave($event)"
-                       x-on:click="$wire.edit({{ $comment->id }}).then((value) => edit = value); open = false; focusButton()">
+                    @if ($comment->policy['update'])
+                        <a href="javascript:void(0);" class="dropdown-menu--item"
+                           x-state:on="Active"
+                           x-state:off="Not Active"
+                           :class="{ 'bg-gray-100 text-gray-900': activeIndex === 0, 'text-gray-700': !(activeIndex === 0) }"
+                           role="menuitem"
+                           tabindex="-1"
+                           :id="$id('menu-item-0')"
+                           @mouseenter="onMouseEnter($event)"
+                           @mousemove="onMouseMove($event, 0)"
+                           @mouseleave="onMouseLeave($event)"
+                           x-on:click="$wire.edit({{ $comment->id }}).then((value) => edit = value); open = false;">
+                            {{ __('vgcomment::comment.edit') }}
+                        </a>
+                    @endif
 
-                        {{ __('vgcomment::comment.edit') }}
-                    </a>
+                    @if ($comment->policy['delete'])
+                        <a href="javascript:void(0);"
+                           class="dropdown-menu--item"
+                           :class="{ 'bg-gray-100 text-gray-900': activeIndex === 1, 'text-gray-700': !(activeIndex === 1) }"
+                           role="menuitem"
+                           tabindex="-1"
+                           :id="$id('menu-item-1')"
+                           @mouseenter="onMouseEnter($event)"
+                           @mousemove="onMouseMove($event, 1)"
+                           @mouseleave="onMouseLeave($event)"
+                           x-on:click="$wire.delete({{ $comment->id }}, 'alert').then((value) => edit = value); open = false;">
+                            {{ __('vgcomment::comment.delete') }}
+                        </a>
+                    @endif
 
-                    <a href="javascript:void(0);"
-                       class="dropdown-menu--item"
-                       :class="{ 'bg-gray-100 text-gray-900': activeIndex === 1, 'text-gray-700': !(activeIndex === 1) }"
-                       role="menuitem"
-                       tabindex="-1"
-                       id="menu-item-1"
-                       @mouseenter="onMouseEnter($event)"
-                       @mousemove="onMouseMove($event, 1)"
-                       @mouseleave="onMouseLeave($event)"
-                       x-on:click="$wire.delete({{ $comment->id }}, 'alert').then((value) => edit = value); open = false; focusButton()">
-                        {{ __('vgcomment::comment.delete') }}
-                    </a>
-
-                    <a href="javascript:void(0);"
-                       class="dropdown-menu--item"
-                       :class="{ 'bg-gray-100 text-gray-900': activeIndex === 2, 'text-gray-700': !(activeIndex === 2) }"
-                       role="menuitem"
-                       tabindex="-1"
-                       id="menu-item-2"
-                       @mouseenter="onMouseEnter($event)"
-                       @mousemove="onMouseMove($event, 2)"
-                       @mouseleave="onMouseLeave($event)"
-                       x-on:click="$wire.report({{ $comment->id }}, 'alert').then((value) => edit = value); open = false; focusButton()">
-                        {{ __('vgcomment::comment.report') }}
-                    </a>
+                    @if ($comment->policy['report'])
+                        <a href="javascript:void(0);"
+                           class="dropdown-menu--item"
+                           :class="{ 'bg-gray-100 text-gray-900': activeIndex === 2, 'text-gray-700': !(activeIndex === 2) }"
+                           role="menuitem"
+                           tabindex="-1"
+                           :id="$id('menu-item-2')"
+                           @mouseenter="onMouseEnter($event)"
+                           @mousemove="onMouseMove($event, 2)"
+                           @mouseleave="onMouseLeave($event)"
+                           x-on:click="$wire.report({{ $comment->id }}, 'alert').then((value) => edit = value); open = false;">
+                            {{ __('vgcomment::comment.report') }}
+                        </a>
+                    @endif
                 </div>
             </div>
 
