@@ -3,12 +3,16 @@
     "description": "Livewire comments packages use backend by vgcomments",
     "keywords": [
         "vigstudio",
-        "livewire-comments"
+        "livewire-comments",
+        "laravel-comments",
+        "comments",
+        "comments-system",
+        "livewire"
     ],
     "homepage": "https://github.com/vigstudio/livewire-comments",
     "license": "MIT",
     "type": "laravel-library",
-    "version": "1.0.5",
+    "version": "1.0.7",
     "authors": [
         {
             "name": "Nghiane.com",
