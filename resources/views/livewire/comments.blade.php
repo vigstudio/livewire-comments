@@ -37,5 +37,5 @@
     </div>
 
 
-    <script src="https://www.google.com/recaptcha/api.js?render={{ Config::get('vgcomment.recaptcha_key') }}"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render={{ Config::get('vgcomment.recaptcha_key') ?? 'xxx' }}"></script>
 </div>

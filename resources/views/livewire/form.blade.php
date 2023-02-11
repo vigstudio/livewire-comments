@@ -4,13 +4,14 @@
      @post-success-comments.window="cleanData()"
      @open-form.window="$event.detail.open_id == {{ $request['parent_id'] ?: 0 }} ? open = true : open = false">
 
-    <form wire:submit.prevent x-data="{
-        request: @entangle('request').defer,
-        async submit() {
-            this.request.recaptcha_token = await grecaptcha.execute(@js(Config::get('vgcomment.recaptcha_key')), { action: '{{ $method }}' });
-            $wire.{{ $method }}();
-        }
-    }">
+    <form wire:submit.prevent
+          x-data="{
+              request: @entangle('request').defer,
+              async submit() {
+                  @if (Config::get('vgcomment.recaptcha')) this.request.recaptcha_token = await grecaptcha.execute(@js(Config::get('vgcomment.recaptcha_key')), { action: '{{ $method }}' }); @endif
+                  $wire.{{ $method }}();
+              }
+          }">
 
         <div class="vcomments__form">
             <div class="form__header">
