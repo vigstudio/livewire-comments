@@ -1,2 +1,2 @@
 @props(['validate' => ''])
-<textarea {{ $attributes->class(['form__textarea '.$validate]) }} {{ $attributes }}></textarea>
+<textarea {{ $attributes->class(['vcomments__form__textarea ' . $validate]) }} {{ $attributes }}></textarea>

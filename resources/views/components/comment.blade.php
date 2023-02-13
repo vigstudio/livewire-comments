@@ -6,31 +6,32 @@
      x-init="emojiPicker('.emoji-button')"
      x-bind:class="{ 'active': window.location.hash == '#vgcomment-{{ $comment->uuid }}' }">
 
-    <div class="vgcomment__header"
+    <div wire:ignore
+         class="vgcomment__header"
          x-data="LivewireComments.menu({ open: false })"
          x-init="init()"
          :id="$id('dropdown-menu')"
          @keydown.escape.stop="open = false;"
          @click.away="onClickAway($event)">
 
-        <div class="author">
-            <div class="avatar">
+        <div class="vgcomment__author">
+            <div class="vgcomment__avatar">
                 <img class="avatar__image"
                      src="{{ $comment->author_avatar }}"
                      alt="{{ $comment->author_name }}">
                 {{-- <span class="avatar--badge">Admin</span> --}}
             </div>
 
-            <div class="info">
+            <div class="vgcomment__info">
                 <p>
                     {{ $comment->author_name }}
                     @if ($comment->parent)
-                        <span class="reply_text ">
+                        <span class="vgcomment__reply_text ">
                             {{ __('Reply to :') }} {{ $comment->parent->author_name }}
                         </span>
                     @endif
                 </p>
-                <p class="time">
+                <p class="vgcomment__time">
                     <time pubdate
                           datetime="{{ $comment->created_at }}"
                           title="{{ $comment->time }}">
@@ -41,12 +42,12 @@
             </div>
         </div>
 
-        <div class="dropdown">
+        <div class="vgcomment__dropdown">
 
             <div>
                 <button
                         type="button"
-                        class="flex items-center rounded-full vcomments__btn none"
+                        class="vgcomment__dropdown_btn"
                         id="menu-button"
                         x-ref="button"
                         @click="onButtonClick();"
@@ -58,21 +59,13 @@
                         @keydown.arrow-up.prevent="onArrowUp()"
                         @keydown.arrow-down.prevent="onArrowDown()">
 
-                    <x-heroicons::icon name="ellipsis-vertical-s" class="w-4 h-4" />
+                    <x-heroicons::icon name="ellipsis-vertical-s" class="vgcomemnt_icon-4" />
                 </button>
             </div>
 
             <div x-show="open"
-                 x-transition:enter="enter"
-                 x-transition:enter-start="enter-start"
-                 x-transition:enter-end="enter-end"
-                 x-transition:leave="leave"
-                 x-transition:leave-start="leave-start"
-                 x-transition:leave-end="leave-end"
-                 class="dropdown-menu"
+                 class="vgcomment__dropdown-menu"
                  x-ref="menu-items"
-                 x-description="Dropdown menu, show/hide based on menu state."
-                 x-bind:aria-activedescendant="activeDescendant"
                  role="menu"
                  aria-orientation="vertical"
                  aria-labelledby="menu-button"
@@ -84,12 +77,13 @@
                  @keyup.space.prevent="open = false;"
                  style="display: none;">
 
-                <div class="py-1" role="none">
+                <div class="vgcomment__py-1" role="none">
                     @if ($comment->policy['update'])
-                        <a href="javascript:void(0);" class="dropdown-menu--item"
+                        <a href="javascript:void(0);"
+                           class="vgcomment__dropdown-menu--item"
                            x-state:on="Active"
                            x-state:off="Not Active"
-                           :class="{ 'bg-gray-100 text-gray-900': activeIndex === 0, 'text-gray-700': !(activeIndex === 0) }"
+                           :class="{ 'vgcomment_select': activeIndex === 0, 'vgcomment__not_select': !(activeIndex === 0) }"
                            role="menuitem"
                            tabindex="-1"
                            :id="$id('menu-item-0')"
@@ -103,8 +97,8 @@
 
                     @if ($comment->policy['delete'])
                         <a href="javascript:void(0);"
-                           class="dropdown-menu--item"
-                           :class="{ 'bg-gray-100 text-gray-900': activeIndex === 1, 'text-gray-700': !(activeIndex === 1) }"
+                           class="vgcomment__dropdown-menu--item"
+                           :class="{ 'vgcomment_select': activeIndex === 1, 'vgcomment__not_select': !(activeIndex === 1) }"
                            role="menuitem"
                            tabindex="-1"
                            :id="$id('menu-item-1')"
@@ -118,8 +112,8 @@
 
                     @if ($comment->policy['report'])
                         <a href="javascript:void(0);"
-                           class="dropdown-menu--item"
-                           :class="{ 'bg-gray-100 text-gray-900': activeIndex === 2, 'text-gray-700': !(activeIndex === 2) }"
+                           class="vgcomment__dropdown-menu--item"
+                           :class="{ 'vgcomment_select': activeIndex === 2, 'text-gray-700': !(activeIndex === 2) }"
                            role="menuitem"
                            tabindex="-1"
                            :id="$id('menu-item-2')"
@@ -134,7 +128,6 @@
             </div>
 
         </div>
-
     </div>
 
     <div class="vgcomment__body">
@@ -142,7 +135,7 @@
         @if ($this->editId == $comment->uuid)
             <livewire:livewire-comments::form method="edit" :wire:key="'edit-'.$comment->id" :editId="$comment->id" />
         @else
-            <div wire:ignore x-data="LivewireComments.content()">{!! $comment->content_html !!}</div>
+            <div x-data="LivewireComments.content()">{!! $comment->content_html !!}</div>
         @endif
 
     </div>
@@ -161,7 +154,7 @@
             <div class="reactions__group">
 
                 <button type="button" class="emoji-button  vcomments__btn primary-tone">
-                    <x-heroicons::icon name="face-smile-o" class="w-3 h-3" />
+                    <x-heroicons::icon name="face-smile-o" class="vgcomemnt_icon-3" />
                 </button>
 
                 @foreach ($comment->reactionsGroup() as $reaction)
@@ -175,8 +168,8 @@
         </div>
 
         <button class="vcomments__btn none comment-reply" type="button">
-            <x-heroicons::icon x-show="reply" name="chevron-up-o" class="mr-2" />
-            <x-heroicons::icon x-show="!reply" name="chat-bubble-left-right-o" class="mr-2" />
+            <x-heroicons::icon x-show="reply" name="chevron-up-o" class="vgcomment_mr-2" />
+            <x-heroicons::icon x-show="!reply" name="chat-bubble-left-right-o" class="vgcomment_mr-2" />
             {{ __('vgcomment::comment.reply') }}
         </button>
     </div>

@@ -1,3 +1,3 @@
-<div class="form__body--preview" {{ $attributes }}>
+<div class="vcomments__form__body--preview" {{ $attributes }}>
     {!! $preview !!}
 </div>
