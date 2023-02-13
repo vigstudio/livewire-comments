@@ -8,9 +8,9 @@
     <form wire:submit.prevent="{{ $method }}">
 
         <div class="vcomments__form">
-            <div class="form__header">
+            <div class="vcomments__form__header">
 
-                <div class="header__tooltips-group">
+                <div class="vcomments__header__tooltips-group">
 
                     <button x-show="tab == 2"
                             x-on:click="tab = 1"
@@ -39,9 +39,9 @@
                           x-show="loading"></span>
                 </div>
 
-                <div class="header__tooltips-group">
+                <div class="vcomments__header__tooltips-group">
 
-                    <div class="header__group">
+                    <div class="vcomments__header__group">
 
                         <button type="button"
                                 class="emoji-button vcomments__btn secondary"
@@ -71,7 +71,7 @@
 
             </div>
 
-            <div class="form__body @error('content') border border-red-600 @enderror">
+            <div class="vcomments__form__body @error('content') border border-red-600 @enderror">
 
 
                 <x-livewire-comments::forms.preview x-show="tab == 2" :preview="$preview" />
@@ -109,7 +109,7 @@
                 </template>
             </div>
 
-            <div class="form__footer">
+            <div class="vcomments__form__footer">
                 <button @disabled(!$this->auth)
                         type="submit"
                         @class([
@@ -121,11 +121,11 @@
                     {{ __('vgcomment::comment.submit') }}
                 </button>
 
-                <div class="footer__tooltips-group">
+                <div class="vcomments__footer__tooltips-group">
                     <span x-show="loading">{{ __('vgcomment::comment.uploading') }}</span>
 
 
-                    <a class="footer__tooltips">
+                    <a class="vcomments__footer__tooltips">
                         <span x-show="tab == 1"
                               class="text-xs text-end"
                               x-text="textarea_length + '/{{ config('vgcomment.max_length') }}'"></span>
