@@ -1,4 +1,4 @@
-<div wire:ignore.self x-data="LivewireComments.form('.textarea-vgcomment-box', $wire)"
+<div @disabled(!$this->auth && !$this->allow_guest) wire:ignore.self x-data="LivewireComments.form('.textarea-vgcomment-box', $wire)"
      x-init="emojiPicker('.emoji-button')"
      @insert-content.window="afterUpload($event)"
      @post-success-comments.window="cleanData()"
@@ -13,17 +13,31 @@
               }
           }">
 
+
+
         <div class="vcomments__form">
+            @if ($this->allow_guest && !$this->auth)
+                <div class="vcomments__form__guest">
+
+                    <input @disabled(session()->has('author')) wire:model.defer="request.author_name" placeholder="Name" type="text" autocomplete="given-name" class="vgcomments__form__guest__input">
+
+                    <input @disabled(session()->has('author')) wire:model.defer="request.author_email" placeholder="Email" type="email" autocomplete="family-name" class="vgcomments__form__guest__input">
+
+                    <input @disabled(session()->has('author')) wire:model.defer="request.author_url" placeholder="Url" type="text" autocomplete="email" class="vgcomments__form__guest__input">
+
+                </div>
+            @endif
+
             <div class="vcomments__form__header">
 
                 <div class="vcomments__header__tooltips-group">
 
-                    <button x-show="tab == 2" x-on:click="tab = 1" type="button" class="vcomments__btn secondary">
+                    <button @disabled(!$this->auth && !$this->allow_guest) x-show="tab == 2" x-on:click="tab = 1" type="button" class="vcomments__btn secondary">
                         <x-heroicons::icon name="eye-slash-o" class="vgcomemnt_icon-5" />
                         <span class="vgcomments__header_title"></span>
                     </button>
 
-                    <button x-show="tab == 1" x-on:click="tab = 2" type="button" class="vcomments__btn secondary" wire:click="preview">
+                    <button @disabled(!$this->auth && !$this->allow_guest) x-show="tab == 1" x-on:click="tab = 2" type="button" class="vcomments__btn secondary" wire:click="preview">
                         <x-heroicons::icon name="eye-o" class="vgcomemnt_icon-5" />
                         <span class="vgcomments__header_title">{{ __('vgcomment::comment.preview') }}</span>
                     </button>
@@ -41,13 +55,13 @@
 
                         <input x-ref="uploadFiles" x-on:change="uploadFile($event)" type="file" class="sr-only" multiple="true">
 
-                        <button type="button" class="emoji-button vcomments__btn secondary" data-popover-target="emoji">
+                        <button @disabled(!$this->auth && !$this->allow_guest) type="button" class="emoji-button vcomments__btn secondary" data-popover-target="emoji">
                             <x-heroicons::icon name="face-smile-s" class="vgcomemnt_icon-4" />
                         </button>
 
 
 
-                        <button type="button" class="vcomments__btn secondary" x-on:click="$refs.uploadFiles.click()">
+                        <button @disabled(!$this->auth && !$this->allow_guest) type="button" class="vcomments__btn secondary" x-on:click="$refs.uploadFiles.click()">
 
                             <x-heroicons::icon name="paper-clip-s" class="vgcomemnt_icon-4" />
 
@@ -65,7 +79,7 @@
                 <x-livewire-comments::forms.textarea
                                                      @class([
                                                          'textarea-vgcomment-box',
-                                                         'disabled' => !$this->auth,
+                                                         'disabled' => !$this->auth && !$this->allow_guest,
                                                          'validate-error' => $errors->has('content'),
                                                      ])
                                                      wire:model.defer="request.content"
@@ -98,11 +112,11 @@
                     <button
                             type="button"
                             x-on:click="submit()"
-                            @disabled(!$this->auth)
+                            @disabled(!$this->auth && !$this->allow_guest)
                             @class([
                                 'vcomments__btn',
-                                'disabled' => !$this->auth,
-                                'primary' => $this->auth,
+                                'disabled' => !$this->auth && !$this->allow_guest,
+                                'primary' => $this->auth || $this->allow_guest,
                             ])
                             wire:loading.attr="disabled">
 

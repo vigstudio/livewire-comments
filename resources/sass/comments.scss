@@ -160,6 +160,14 @@
 
     @apply mb-4 w-full bg-gray-50 rounded-lg border border-gray-200;
 
+    .vcomments__form__guest {
+        @apply flex py-2 px-3 border-b;
+
+        .vgcomments__form__guest__input {
+            @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm ml-4;
+        }
+    }
+
     .vcomments__form__header {
         @apply flex justify-between items-center py-2 px-3 border-b;
 

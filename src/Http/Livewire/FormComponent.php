@@ -54,6 +54,12 @@ class FormComponent extends Component
             $this->request['content'] = CommentServiceFacade::findById($this->editId)?->content;
         }
 
+        if (session()->has('author')) {
+            $this->request['author_name'] = session('author.name');
+            $this->request['author_email'] = session('author.email');
+            $this->request['author_url'] = session('author.url');
+        }
+
         $this->request['page_id'] = $this->pageId;
         $this->request['commentable_id'] = ! empty($this->commentable) ? $this->commentable->id : null;
         $this->request['commentable_type'] = ! empty($this->commentable) ? get_class($this->commentable) : null;
@@ -64,13 +70,16 @@ class FormComponent extends Component
         return CommentServiceFacade::getAuth();
     }
 
+    public function getAllowGuestProperty()
+    {
+        $allowGuest = Config::get('vgcomment.allow_guests');
+
+        return $allowGuest;
+    }
+
     public function render()
     {
-        if ($this->auth) {
-            return view('livewire-comments::livewire.form');
-        } else {
-            return view('livewire-comments::livewire.form-guest');
-        }
+        return view('livewire-comments::livewire.form');
     }
 
     public function submit()
