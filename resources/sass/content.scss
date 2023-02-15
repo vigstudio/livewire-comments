@@ -26,12 +26,18 @@
     }
 
     p {
-        @apply flex break-all;
+        @apply break-all;
 
-        img {
-            @apply max-w-xs h-auto;
+    }
+
+    p:has(> img) {
+        @apply container mx-auto space-y-2 lg:space-y-0 lg:gap-2 lg:grid lg:grid-cols-3;
+        br {
+            display: none;
         }
-
+        img {
+            @apply w-full rounded;
+        }
     }
 
     img {
