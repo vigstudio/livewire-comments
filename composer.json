@@ -22,7 +22,7 @@
     ],
     "require": {
         "php": "^8.0",
-        "vigstudio/vgcomments": "^1.0.11",
+        "vigstudio/vgcomments": "^1.1.0",
         "livewire/livewire": "^2.10.7",
         "archielite/laravel-heroicons": "^0.2.0"
     },
