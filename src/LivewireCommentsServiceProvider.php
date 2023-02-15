@@ -51,13 +51,13 @@ class LivewireCommentsServiceProvider extends ServiceProvider
     protected function registerBladeDirectives()
     {
         Blade::directive('commentStyles', function ($expression) {
-            $style = '<link href="' . asset('vendor/livewire-comments/css/comments.css') . '" rel="stylesheet">';
+            $style = '<link href="' . asset('vendor/livewire-comments/css/comments.css') . '?v=' . date('YmdHs') . '" rel="stylesheet">';
 
             return $style;
         });
 
         Blade::directive('commentScripts', function ($expression) {
-            $script = '<script src="' . asset('vendor/livewire-comments/js/comments.js') . '"></script>';
+            $script = '<script src="' . asset('vendor/livewire-comments/js/comments.js') . '?v=' . date('YmdHs') . '"></script>';
 
             return $script;
         });
