@@ -1,4 +1,4 @@
-<div class="vcomments-box">
+<div class="vcomments-box" wire:init="deferLoading('comments')">
 
     <div wire:ignore>
         <x-livewire-comments::modal />
@@ -8,7 +8,7 @@
 
     <div class="flex justify-between items-center mb-6 border-b-2 border-gray-400 px-4">
         <h2 class="text-lg lg:text-2xl font-bold text-gray-900">
-            {{ __('vgcomment::comment.discussion') }} ({{ $this->comments->total() }})
+            {{ __('vgcomment::comment.discussion') }} ({{ $comments->total() }})
         </h2>
 
         <div class="flex justify-between items-center mb-2">
@@ -24,16 +24,13 @@
 
     <livewire:livewire-comments::form method="submit" :pageId="$pageId" :commentable="$commentable" />
 
-    @foreach ($this->comments as $comment)
-        <x-livewire-comments::comment :comment="$comment" />
-
-        @foreach ($comment->replies as $replies)
-            <x-livewire-comments::comment :key="$replies->uuid" :replies="true" :comment="$replies" />
+    @if ($comments->total() > 0)
+        @foreach ($comments as $comment)
+            <x-livewire-comments::comment :comment="$comment" />
         @endforeach
-    @endforeach
-
+    @endif
     <div>
-        {{ $this->comments->links() }}
+        {{ $comments->links() }}
     </div>
 
 

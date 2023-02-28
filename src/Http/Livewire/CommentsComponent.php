@@ -5,6 +5,7 @@ namespace Vigstudio\LivewireComments\Http\Livewire;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vigstudio\VgComment\Facades\CommentServiceFacade;
+use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 
 class CommentsComponent extends Component
 {
@@ -25,7 +26,10 @@ class CommentsComponent extends Component
         'order' => 'latest',
     ];
 
-    protected $queryString = [];
+    public $loading = true;
+
+    protected $queryString = [
+    ];
 
     protected function getListeners()
     {
@@ -42,9 +46,14 @@ class CommentsComponent extends Component
         ];
     }
 
-    public function getAuthProperty()
+    public function deferLoading()
     {
-        return CommentServiceFacade::getAuth();
+        $this->loading = false;
+    }
+
+    public function updatingRequest()
+    {
+        $this->resetPage('vgcomment_page');
     }
 
     public function mount()
@@ -55,14 +64,20 @@ class CommentsComponent extends Component
         $this->request['commentable_type'] = ! empty($this->commentable) ? get_class($this->commentable) : null;
     }
 
-    public function getCommentsProperty()
+    public function getComments()
     {
+        if ($this->loading) {
+            return new Paginator(Paginator::resolveCurrentPage(), 0, 10);
+        }
+
         return CommentServiceFacade::get($this->request);
     }
 
     public function render()
     {
-        return view('livewire-comments::livewire.comments');
+        $comments = $this->getComments();
+
+        return view('livewire-comments::livewire.comments', compact('comments'));
     }
 
     public function checkPermission($id, $action): bool

@@ -183,4 +183,7 @@
                                           :request="['root_id' => $comment->root_id ? $comment->root_id : $comment->id, 'parent_id' => $comment->id]" />
     </div>
 
+    @foreach ($comment->replies as $replies)
+        <x-livewire-comments::comment :key="$replies->uuid" :replies="true" :comment="$replies" />
+    @endforeach
 </div>
