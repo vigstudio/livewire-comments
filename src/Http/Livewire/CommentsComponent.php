@@ -5,7 +5,6 @@ namespace Vigstudio\LivewireComments\Http\Livewire;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vigstudio\VgComment\Facades\CommentServiceFacade;
-use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 
 class CommentsComponent extends Component
 {
@@ -67,10 +66,10 @@ class CommentsComponent extends Component
     public function getComments()
     {
         if ($this->loading) {
-            return new Paginator(Paginator::resolveCurrentPage(), 0, 10);
+            return [];
         }
 
-        return CommentServiceFacade::get($this->request);
+        return CommentServiceFacade::get($this->request, false);
     }
 
     public function render()
