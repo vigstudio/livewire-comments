@@ -97,6 +97,11 @@ class CommentsComponent extends Component
         CommentServiceFacade::reaction($uuid, $type);
     }
 
+    public function unReact(string $uuid, string $type)
+    {
+        CommentServiceFacade::deleteReaction($uuid, $type);
+    }
+
     public function edit($id)
     {
         $comment = CommentServiceFacade::findById($id);

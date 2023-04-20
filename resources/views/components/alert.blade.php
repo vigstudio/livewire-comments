@@ -15,25 +15,25 @@
              x-transition:leave-end="end"
              class="vg__body"
              style="display: none;">
-            <div class="p-4">
+            <div class="vgcomment_p-4">
                 <div class="vg__content">
                     <x-heroicons::icon x-show="type == 'success'"
                                        name="check-circle-s"
-                                       class="h-6 w-6 text-green-400" />
+                                       class="vg_icon_success" />
 
 
                     <x-heroicons::icon x-show="type == 'alert'"
                                        name="exclamation-triangle-s"
-                                       class="h-6 w-6 text-orange-300" />
+                                       class="vg_icon_warning" />
 
                     <x-heroicons::icon x-show="type == 'error'"
                                        name="x-circle-s"
-                                       class="h-6 w-6 text-red-600" />
+                                       class="vg_icon_danger" />
 
                     <div class="vg__message">
-                        <p class="text-sm font-medium text-gray-900 capitalize"
+                        <p class="vg__message_p_cap"
                            x-text="title + ' !'"></p>
-                        <p class="mt-1 text-sm text-gray-500"
+                        <p class="vg__message_p_mess"
                            x-text="message"></p>
                     </div>
 
@@ -42,7 +42,7 @@
                                 x-on:click="show = false"
                                 class="vcomments__btn none">
                             <x-heroicons::icon name="x-mark-s"
-                                               class="h-5 w-5" />
+                                               class="vgcomemnt_icon-5" />
                         </button>
                     </div>
                 </div>

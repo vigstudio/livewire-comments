@@ -13,8 +13,28 @@
     @apply bg-gray-100 cursor-not-allowed;
 }
 
-.vcomments-box {
+.vgcomment_box {
     @apply mb-4 w-full bg-white;
+
+    .vgcomment_box_navbar {
+        @apply flex justify-between items-center mb-6 border-b-2 border-gray-400 px-4;
+
+        .vgcomment_box_navbar-title {
+            @apply text-lg lg:text-2xl font-bold text-gray-900;
+        }
+
+        .vgcomment_box_navbar-dropdown {
+            @apply flex justify-between items-center mb-2;
+
+            .vgcomment_box_navbar_dropdown-group {
+                @apply flex justify-between;
+
+                .vgcomment_box_navbar_dropdown-select {
+                    @apply mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm;
+                }
+            }
+        }
+    }
 
     .vcomment-row {
         @apply mb-6 text-base bg-gray-50 border  border-gray-200;
@@ -143,15 +163,65 @@
         }
     }
 
-    .vpagination {
+    .vgcomment_box-pagination {
         @apply flex items-center justify-between;
 
-        .mobile-mode {
+        .vgcomment_box_pagination-mobile-mode {
             @apply flex justify-between flex-1 sm:hidden;
+
+            .vgcomment_box_pagination-previous-span {
+                @apply relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5 rounded-md select-none;
+            }
+            .vgcomment_box_pagination-next-span {
+                @apply relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5 rounded-md select-none;
+            }
+
+            .vgcomment_box_pagination-previous-button {
+                @apply relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 rounded-md hover:text-gray-500 focus:outline-none focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150;
+            }
+            .vgcomment_box_pagination-next-button {
+                @apply relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 rounded-md hover:text-gray-500 focus:outline-none focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150;
+            }
         }
 
-        .desktop-mode {
+        .vgcomment_box_pagination-desktop-mode {
             @apply hidden sm:flex-1 sm:flex sm:items-center sm:justify-between;
+
+            .vgcomment_box_pagination-desktop-mode-title {
+                @apply text-sm text-gray-700 leading-5;
+            }
+
+            .vgcomment_box_pagination-desktop-mode-group {
+                @apply relative z-0 inline-flex rounded-md shadow-sm;
+
+                .vgcomment_box_pagination-desktop-mode-page-link {
+                    @apply relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-l-md leading-5;
+                }
+
+                .vgcomment_box_pagination-desktop-mode-page-link-button {
+                    @apply relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150;
+                }
+
+                .vgcomment_box_pagination-desktop-mode-page-dot {
+                    @apply relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5 select-none;
+                }
+
+                .vgcomment_box_pagination-desktop-mode-page-array-link {
+                    @apply relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5 select-none;
+                }
+
+                .vgcomment_box_pagination-desktop-mode-page-array-button {
+                    @apply relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150;
+                }
+
+                .vgcomment_box_pagination-desktop-mode-page-link-next {
+                    @apply relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-r-md leading-5;
+                }
+
+                .vgcomment_box_pagination-desktop-mode-page-link-button-next {
+                    @apply relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150;
+                }
+            }
         }
     }
 }
@@ -312,10 +382,30 @@
 
                 .vg__message {
                     @apply ml-3 w-0 flex-1 pt-0.5;
+
+                    .vg__message_p_cap {
+                        @apply text-sm font-medium text-gray-900 capitalize;
+                    }
+
+                    .vg__message_p_mess {
+                        @apply mt-1 text-sm text-gray-500;
+                    }
                 }
 
                 .vg_toolkit {
                     @apply ml-4 flex flex-shrink-0;
+                }
+
+                .vg_icon_success {
+                    @apply h-6 w-6 text-green-400;
+                }
+
+                .vg_icon_warning {
+                    @apply h-6 w-6 text-orange-300;
+                }
+
+                .vg_icon_danger {
+                    @apply h-6 w-6 text-red-600;
                 }
             }
         }
@@ -394,6 +484,60 @@
     }
 }
 
+.vgcomments_confirm {
+    @apply relative z-10;
+
+    .vgcomments_confirm-over {
+        @apply fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity;
+    }
+
+    .vgcomments_confirm-container {
+        @apply fixed inset-0 z-10 overflow-y-auto;
+
+        .vgcomments_confirm-container-content {
+            @apply flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0;
+
+            .vgcomments_confirm-container-content-div {
+                @apply relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6;
+
+                .vgcomments_confirm-container-content-div-row {
+                    @apply sm:flex sm:items-start;
+
+                    .vgcomments_confirm-container-content-div-row-icon {
+                        @apply mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10;
+                    }
+
+                    .vgcomments_confirm-container-content-div-row-text {
+                        @apply mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left;
+
+                        .vgcomments_confirm-container-content-div-row-text-title {
+                            @apply text-lg font-medium leading-6 text-gray-900;
+                        }
+                    }
+
+                    .vgcomments_confirm-icon-danger {
+                        @apply h-6 w-6 text-red-600;
+                    }
+                }
+
+                .vgcomments_confirm-container-content-div-footer {
+                    @apply mt-5 sm:mt-4 sm:flex sm:flex-row-reverse;
+
+                    .vgcomments_confirm-container-content-div-footer-button {
+                        @apply inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm;
+                    }
+
+                    .vgcomments_confirm-container-content-div-footer-button-cancel {
+                        @apply mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm;
+                    }
+                }
+            }
+        }
+    }
+
+
+}
+
 .vgcomemnt_icon-5 {
     @apply w-5 h-5;
 }
@@ -430,3 +574,10 @@
     @apply ml-2;
 }
 
+.vgcomment-font-medium {
+    @apply font-medium;
+}
+
+.vgcomment_p-4 {
+    @apply p-4;
+}

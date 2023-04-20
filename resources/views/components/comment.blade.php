@@ -158,7 +158,9 @@
                 </button>
 
                 @foreach ($comment->reactionsGroup() as $reaction)
-                    <button type="button" class="vcomments__btn @if ($reaction->where('user_reacted', true)->count() > 0) active @else none @endif">
+                    <button type="button"
+                            class="vcomments__btn @if ($reaction->where('user_reacted', true)->count() > 0) active @else none @endif"
+                            @if ($reaction->where('user_reacted', true)->count() > 0) wire:click="unReact('{{ $comment->uuid }}', '{{ $reaction->first()->type }}')" @endif>
                         <span class="emoji">{{ $reaction->first()->type }}</span>
                         <span class="text">{{ $reaction->count() }}</span>
                     </button>

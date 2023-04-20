@@ -57,7 +57,8 @@ class LivewireCommentsServiceProvider extends ServiceProvider
         });
 
         Blade::directive('commentScripts', function ($expression) {
-            $script = '<script src="' . asset('vendor/livewire-comments/js/comments.js') . '?v=' . date('YmdHs') . '"></script>';
+            $script  =  '<script src="https://www.google.com/recaptcha/api.js?render=' . Config::get('vgcomment.recaptcha_key') . '"></script>';
+            $script .= '<script src="' . asset('vendor/livewire-comments/js/comments.js') . '?v=' . date('YmdHs') . '"></script>';
 
             return $script;
         });
