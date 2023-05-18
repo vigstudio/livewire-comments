@@ -31,7 +31,7 @@
                      class="card__body"
                      @click.away="open = false">
 
-                    <div class="text-right">
+                    <div class="vgcomment_text-right">
                         <button x-on:click="open = false" type="button" class="vcomments__btn none">
                             <x-heroicons::icon name="x-mark-o" />
                         </button>

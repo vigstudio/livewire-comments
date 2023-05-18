@@ -538,6 +538,10 @@
 
 }
 
+.vgcomments_loading {
+    @apply inline mr-2 w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600;
+}
+
 .vgcomemnt_icon-5 {
     @apply w-5 h-5;
 }
@@ -580,4 +584,24 @@
 
 .vgcomment_p-4 {
     @apply p-4;
+}
+
+.vgcomment_w-full {
+    @apply w-full;
+}
+
+.vgcomment_text-center {
+    @apply text-center;
+}
+
+.vgcomment_text-right {
+    @apply text-right;
+}
+
+.vgcomment_text-xs {
+    @apply text-xs;
+}
+
+.vgcomemnt_text-end {
+    @apply text-end;
 }

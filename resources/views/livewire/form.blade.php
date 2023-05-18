@@ -100,7 +100,7 @@
 
                     <a x-show="!file.mime_type.includes('image')" x-bind:href="file.url_stream" target="_blank" class="vcomments__file">
                         <x-heroicons::icon name="paper-clip-s" class="vgcomemnt_icon-4" />
-                        <span class="w-full" x-text="getFileName(file.file_name) + ' - ' + (file.size / 1000).toFixed(2) + ' KB'"></span>
+                        <span class="vgcomment_w-full" x-text="getFileName(file.file_name) + ' - ' + (file.size / 1000).toFixed(2) + ' KB'"></span>
 
                     </a>
                 </template>
@@ -155,7 +155,7 @@
                     <span x-show="loading">{{ __('vgcomment::comment.uploading') }}</span>
 
                     <a class="vcomments__footer__tooltips">
-                        <span x-show="tab == 1" class="text-xs text-end" x-text="textarea_length + '/{{ config('vgcomment.max_length') }}'"></span>
+                        <span x-show="tab == 1" class="vgcomment_text-xs vgcomemnt_text-end" x-text="textarea_length + '/{{ config('vgcomment.max_length') }}'"></span>
                     </a>
                 </div>
 

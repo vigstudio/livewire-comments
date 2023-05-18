@@ -113,7 +113,7 @@
                     @if ($comment->policy['report'])
                         <a href="javascript:void(0);"
                            class="vgcomment__dropdown-menu--item"
-                           :class="{ 'vgcomment_select': activeIndex === 2, 'text-gray-700': !(activeIndex === 2) }"
+                           :class="{ 'vgcomment_select': activeIndex === 2, 'vgcomment__not_select': !(activeIndex === 2) }"
                            role="menuitem"
                            tabindex="-1"
                            :id="$id('menu-item-2')"
@@ -143,8 +143,8 @@
     <div class="vgcomment__attachments">
         @foreach ($comment->files as $file)
             <a href="{{ $file->url_stream }}" target="_blank" class="file">
-                <x-heroicons::icon name="paper-clip-s" class="w-4 h-4" />
-                <span class="w-full">{{ $file->file_name }} - ({{ number_format($file->size / 1000, 2) }} KB)</span>
+                <x-heroicons::icon name="paper-clip-s" class="vgcomemnt_icon-4" />
+                <span class="vgcomment_w-full">{{ $file->file_name }} - ({{ number_format($file->size / 1000, 2) }} KB)</span>
             </a>
         @endforeach
     </div>
