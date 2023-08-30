@@ -2,7 +2,13 @@
      class="vgcomments_alert"
      x-data="{ alert: false, type: 'success', title: '', message: '' }"
      @keydown.window.escape="alert = false"
-     @alert.window="alert = true; type = $event.detail.type; title = $event.detail.title; message = $event.detail.message; setTimeout(() => alert = false, 5000)">
+     @alert-js.window="
+        alert = true;
+        type = $event.detail.type;
+        title = $event.detail.title;
+        message = $event.detail.message;
+        setTimeout(() => alert = false, 5000);
+     ">
 
     <div class="vg__container">
 

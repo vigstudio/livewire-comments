@@ -95,11 +95,11 @@ class FormComponent extends Component
             $this->request['content'] = '';
             $this->request['recaptcha_token'] = '';
 
-            $this->reset('preview');
+            $this->reset('preview', 'attachments');
 
-            $this->emit('post-success-comments', $result);
+            $this->dispatch('post-success-comments', $result);
 
-            $this->dispatchBrowserEvent('post-success-comments');
+            // $this->dispatchBrowserEvent('post-success-comments');
         }
     }
 
@@ -120,28 +120,28 @@ class FormComponent extends Component
 
             $this->reset('editId');
 
-            $this->emit('post-success-comments', $comment);
+            $this->dispatch('post-success-comments', $comment);
 
-            $this->dispatchBrowserEvent('post-success-comments');
+            // $this->dispatchBrowserEvent('post-success-comments');
         } catch (\Throwable $th) {
             throw $th;
         }
     }
 
-    public function uploadFile()
+    public function uploadFile(String $id)
     {
         $files = CommentServiceFacade::upload($this->clipboard);
 
         $this->reset('clipboard');
 
         if (! $files) {
-            $this->dispatchBrowserEvent('insert-content', 'false');
+            $this->dispatch('insert-content-' . $id, 'false');
 
             return false;
         }
 
         foreach ($files as $file) {
-            $this->dispatchBrowserEvent('insert-content', $file);
+            $this->dispatch('insert-content-' . $id, $file);
         }
 
         return $files;
@@ -156,7 +156,7 @@ class FormComponent extends Component
     public function cancel()
     {
         $this->reset('editId');
-        $this->emit('cancel-edit');
+        $this->dispatch('cancel-edit');
     }
 
     public function getErrors()

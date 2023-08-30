@@ -23,7 +23,7 @@
     "require": {
         "php": "^8.0",
         "vigstudio/vgcomments": "^1.1.4",
-        "livewire/livewire": "^2.10.7",
+        "livewire/livewire": "^3",
         "archielite/laravel-heroicons": "^0.2.0"
     },
     "require-dev": {

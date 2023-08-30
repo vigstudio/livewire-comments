@@ -1,12 +1,17 @@
-<div @disabled(!$this->auth && !$this->allow_guest) wire:ignore.self x-data="LivewireComments.form('.textarea-vgcomment-box', $wire)"
+@php
+    $id = Str::uuid();
+@endphp
+<div @disabled(!$this->auth && !$this->allow_guest)
+     wire:ignore.self
+     x-data="LivewireComments.form('.textarea-vgcomment-box', '{{ $id }}', $wire)"
      x-init="emojiPicker('.emoji-button')"
-     @insert-content.window="afterUpload($event)"
+     @insert-content-{{ $id }}.window="afterUpload($event)"
      @post-success-comments.window="cleanData()"
      @open-form.window="$event.detail.open_id == {{ $request['parent_id'] ?: 0 }} ? open = true : open = false">
 
     <form wire:submit.prevent
           x-data="{
-              request: @entangle('request').defer,
+              request: @entangle('request'),
               async submit() {
                   @if (Config::get('vgcomment.recaptcha')) this.request.recaptcha_token = await grecaptcha.execute(@js(Config::get('vgcomment.recaptcha_key')), { action: '{{ $method }}' }); @endif
                   $wire.{{ $method }}();
@@ -19,11 +24,11 @@
             @if ($this->allow_guest && !$this->auth)
                 <div class="vcomments__form__guest">
 
-                    <input @disabled(session()->has('author')) wire:model.defer="request.author_name" placeholder="Name" type="text" autocomplete="given-name" class="vgcomments__form__guest__input">
+                    <input @disabled(session()->has('author')) wire:model="request.author_name" placeholder="Name" type="text" autocomplete="given-name" class="vgcomments__form__guest__input">
 
-                    <input @disabled(session()->has('author')) wire:model.defer="request.author_email" placeholder="Email" type="email" autocomplete="family-name" class="vgcomments__form__guest__input">
+                    <input @disabled(session()->has('author')) wire:model="request.author_email" placeholder="Email" type="email" autocomplete="family-name" class="vgcomments__form__guest__input">
 
-                    <input @disabled(session()->has('author')) wire:model.defer="request.author_url" placeholder="Url" type="text" autocomplete="email" class="vgcomments__form__guest__input">
+                    <input @disabled(session()->has('author')) wire:model="request.author_url" placeholder="Url" type="text" autocomplete="email" class="vgcomments__form__guest__input">
 
                 </div>
             @endif
@@ -82,7 +87,7 @@
                                                          'disabled' => !$this->auth && !$this->allow_guest,
                                                          'validate-error' => $errors->has('content'),
                                                      ])
-                                                     wire:model.defer="request.content"
+                                                     wire:model="request.content"
                                                      x-show="tab == 1"
                                                      x-on:paste="pasteClipboard($event)"
                                                      x-on:drop.prevent="dropFile($event)"
@@ -97,11 +102,9 @@
 
             <div class="vcomments__form__attachments">
                 <template x-for="file in files">
-
                     <a x-show="!file.mime_type.includes('image')" x-bind:href="file.url_stream" target="_blank" class="vcomments__file">
                         <x-heroicons::icon name="paper-clip-s" class="vgcomemnt_icon-4" />
                         <span class="vgcomment_w-full" x-text="getFileName(file.file_name) + ' - ' + (file.size / 1000).toFixed(2) + ' KB'"></span>
-
                     </a>
                 </template>
             </div>

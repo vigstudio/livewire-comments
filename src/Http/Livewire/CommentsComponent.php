@@ -129,7 +129,7 @@ class CommentsComponent extends Component
         $this->checkPermission($id, 'report');
 
         if ($action == 'alert') {
-            $this->dispatchBrowserEvent('confirm-action', ['id' => $id, 'message' => trans('vgcomment::comment.report_confirm'), 'action' => 'report']);
+            $this->dispatch('confirm-action', ['id' => $id, 'message' => trans('vgcomment::comment.report_confirm'), 'action' => 'report']);
         }
 
         if ($action == 'report') {
@@ -143,7 +143,7 @@ class CommentsComponent extends Component
         $this->checkPermission($id, 'delete');
 
         if ($action == 'alert') {
-            $this->dispatchBrowserEvent('confirm-action', ['id' => $id, 'message' => trans('vgcomment::comment.delete_confirm'), 'action' => 'delete']);
+            $this->dispatch('confirm-action', ['id' => $id, 'message' => trans('vgcomment::comment.delete_confirm'), 'action' => 'delete']);
         }
 
         if ($action == 'delete') {

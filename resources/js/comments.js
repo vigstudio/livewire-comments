@@ -2,8 +2,9 @@ import {createPopup} from '@picmo/popup-picker';
 import Plyr from 'plyr';
 import hljs from 'highlight.js';
 
+
 window.LivewireComments = {},
-    window.LivewireComments.form = function (id, $wire) {
+    window.LivewireComments.form = function (cl, id, $wire) {
         return {
             open: false,
             tab: 1,
@@ -13,7 +14,7 @@ window.LivewireComments = {},
             textarea_length: 0,
             progress: 0,
             init() {
-                this.textarea = this.$el.querySelector(id);
+                this.textarea = this.$el.querySelector(cl);
                 if (this.loading) {
                     this.textarea.setAttribute('disabled', true);
                 }
@@ -76,9 +77,8 @@ window.LivewireComments = {},
             },
             beginUpload(files) {
                 if (files.length > 0) {
-
                     $wire.uploadMultiple('clipboard', files, () => {
-                        $wire.uploadFile();
+                        $wire.uploadFile(id);
                     }, () => {
                         this.loading = false;
                         $wire.getErrors();
@@ -96,15 +96,17 @@ window.LivewireComments = {},
                     this.loading = false;
                     return;
                 }
+                e.detail.forEach((value, index) => {
+                    if (e.detail.mime !== 'image') {
+                        this.files.push(value);
+                    }
 
-                if (e.detail.mime !== 'image') {
-                    this.files.push(e.detail);
-                }
+                    if (value.mime == 'image') {
+                        let markdown = "![" + value.name + "](" + value.url_stream + ")"
+                        this.insertContent(markdown + '\n ');
+                    }
+                })
 
-                if (e.detail.mime == 'image') {
-                    let markdown = "![" + e.detail.name + "](" + e.detail.url_stream + ")"
-                    this.insertContent(markdown + '\n ');
-                }
 
                 $wire.attachments = this.files;
                 this.loading = false;
@@ -265,15 +267,12 @@ window.LivewireComments = {},
         }
     };
 
-
-window.livewire.on('alert', data => {
+window.Livewire.on('alert', data => {
     const type = data[0].toString();
-    const message = data[1];
+    const message = data[1].toString();
 
-    window.dispatchEvent(new CustomEvent('alert', {detail: {type: type, title: type, message: message}}));
+    window.dispatchEvent(new CustomEvent('alert-js', {detail: {type: type, title: type, message: message}}));
 });
-
-
 
 function useTrackedPointer() {
     let e = [-1, -1];

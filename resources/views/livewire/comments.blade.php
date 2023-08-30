@@ -15,7 +15,7 @@
 
             <div class="vgcomment_box_navbar-dropdown">
                 <div class="vgcomment_box_navbar_dropdown-group">
-                    <select wire:model="request.order" class="vgcomment_box_navbar_dropdown-select">
+                    <select wire:model.live="request.order" class="vgcomment_box_navbar_dropdown-select">
                         <option value="latest">{{ __('vgcomment::comment.latest') }}</option>
                         <option value="oldest">{{ __('vgcomment::comment.oldest') }}</option>
                         <option value="popular">{{ __('vgcomment::comment.popular') }}</option>

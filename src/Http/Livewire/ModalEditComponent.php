@@ -64,8 +64,8 @@ class ModalEditComponent extends Component
         $this->request['content'] = '';
 
         $this->reset('preview');
-        $this->emit('post-success-comments');
-        $this->dispatchBrowserEvent('post-success-comments');
+        $this->dispatch('post-success-comments');
+        // $this->dispatchBrowserEvent('post-success-comments');
     }
 
     public function uploadFile(CommentService $commentService)
@@ -76,10 +76,10 @@ class ModalEditComponent extends Component
 
         if ($files) {
             foreach ($files as $file) {
-                $this->dispatchBrowserEvent('insert-content', $file);
+                $this->dispatch('insert-content', $file);
             }
         } else {
-            $this->dispatchBrowserEvent('insert-content', 'false');
+            $this->dispatch('insert-content', 'false');
 
             return false;
         }
