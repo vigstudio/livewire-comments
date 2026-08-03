@@ -8,7 +8,6 @@
      @insert-content-{{ $id }}.window="afterUpload($event)"
      @post-success-comments.window="cleanData()"
      @open-form.window="$event.detail.open_id == {{ $request['parent_id'] ?: 0 }} ? open = true : open = false">
-
     <form wire:submit.prevent
           x-data="{
               request: @entangle('request'),
@@ -21,17 +20,7 @@
 
 
         <div class="vcomments__form">
-            @if ($this->allow_guest && !$this->auth)
-                <div class="vcomments__form__guest">
-
-                    <input @disabled(session()->has('author')) wire:model="request.author_name" placeholder="Name" type="text" autocomplete="given-name" class="vgcomments__form__guest__input">
-
-                    <input @disabled(session()->has('author')) wire:model="request.author_email" placeholder="Email" type="email" autocomplete="family-name" class="vgcomments__form__guest__input">
-
-                    <input @disabled(session()->has('author')) wire:model="request.author_url" placeholder="Url" type="text" autocomplete="email" class="vgcomments__form__guest__input">
-
-                </div>
-            @endif
+            @include('livewire-comments::livewire.form.guest')
 
             <div class="vcomments__form__header">
 

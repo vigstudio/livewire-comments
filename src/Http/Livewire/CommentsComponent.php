@@ -2,6 +2,7 @@
 
 namespace Vigstudio\LivewireComments\Http\Livewire;
 
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vigstudio\VgComment\Facades\CommentServiceFacade;
@@ -11,31 +12,25 @@ class CommentsComponent extends Component
     use Actions\Alert;
     use WithPagination;
 
+    #[Locked]
     public $pageId = null;
 
-    public $commentable;
+    #[Locked]
+    public $commentable = null;
 
     public $editId;
 
-    public $request = [
-        'root_id' => null,
-        'page_id' => null,
-        'commentable_type' => null,
-        'commentable_id' => null,
+    public array $request = [
         'order' => 'latest',
     ];
 
-    public $loading = true;
+    public bool $loading = true;
 
-    protected $queryString = [
-    ];
-
-    protected function getListeners()
+    protected function getListeners(): array
     {
-        $commentable_id = ! empty($this->commentable) ? $this->commentable['id'] : null;
-        $commentable_type = ! empty($this->commentable) ? get_class($this->commentable) : null;
-
-        $hash = vgcomment_page_hash($this->pageId, $commentable_id, $commentable_type);
+        $commentableId = ! empty($this->commentable) ? $this->commentable->getKey() : null;
+        $commentableType = ! empty($this->commentable) ? get_class($this->commentable) : null;
+        $hash = vgcomment_page_hash($this->pageId, $commentableId, $commentableType);
 
         return [
             'post-success-comments' => 'listenCommentPosted',
@@ -45,22 +40,14 @@ class CommentsComponent extends Component
         ];
     }
 
-    public function deferLoading()
+    public function deferLoading(): void
     {
         $this->loading = false;
     }
 
-    public function updatingRequest()
+    public function updatingRequest(): void
     {
         $this->resetPage('vgcomment_page');
-    }
-
-    public function mount()
-    {
-        $this->request['page_id'] = $this->pageId;
-
-        $this->request['commentable_id'] = ! empty($this->commentable) ? $this->commentable['id'] : null;
-        $this->request['commentable_type'] = ! empty($this->commentable) ? get_class($this->commentable) : null;
     }
 
     public function getComments()
@@ -69,19 +56,19 @@ class CommentsComponent extends Component
             return [];
         }
 
-        return CommentServiceFacade::get($this->request, false);
+        return CommentServiceFacade::get($this->queryPayload(), false);
     }
 
     public function render()
     {
-        $comments = $this->getComments();
-
-        return view('livewire-comments::livewire.comments', compact('comments'));
+        return view('livewire-comments::livewire.comments', [
+            'comments' => $this->getComments(),
+        ]);
     }
 
-    public function checkPermission($id, $action): bool
+    public function checkPermission($id, string $action): bool
     {
-        $comment = CommentServiceFacade::findById($id);
+        $comment = CommentServiceFacade::findById((int) $id);
 
         if (! $comment || ! vgcomment_policy($comment->id, $action)) {
             session()->push('alert', ['error', trans('vgcomment::validation.errors.not_authorized')]);
@@ -92,67 +79,84 @@ class CommentsComponent extends Component
         return true;
     }
 
-    public function react(string $uuid, string $type)
+    public function react(string $uuid, string $type): void
     {
         CommentServiceFacade::reaction($uuid, $type);
     }
 
-    public function unReact(string $uuid, string $type)
+    public function unReact(string $uuid, string $type): void
     {
         CommentServiceFacade::deleteReaction($uuid, $type);
     }
 
-    public function edit($id)
+    public function edit($id): bool
     {
-        $comment = CommentServiceFacade::findById($id);
+        if (! $this->checkPermission($id, 'update')) {
+            return false;
+        }
 
-        $this->checkPermission($id, 'update');
-
+        $comment = CommentServiceFacade::findById((int) $id);
         $this->editId = $comment->uuid;
 
         return true;
     }
 
-    public function confirmAction($id, $action)
+    public function confirmAction($id, $action): void
     {
-        if ($action == 'delete') {
+        if ($action === 'delete') {
             $this->delete($id, 'delete');
         }
 
-        if ($action == 'report') {
+        if ($action === 'report') {
             $this->report($id, 'report');
         }
     }
 
-    public function report(string $id, $action = 'alert')
+    public function report(string $id, string $action = 'alert'): void
     {
-        $this->checkPermission($id, 'report');
-
-        if ($action == 'alert') {
-            $this->dispatch('confirm-action', ['id' => $id, 'message' => trans('vgcomment::comment.report_confirm'), 'action' => 'report']);
+        if (! $this->checkPermission($id, 'report')) {
+            return;
         }
 
-        if ($action == 'report') {
-            $comment = CommentServiceFacade::findById($id);
+        if ($action === 'alert') {
+            $this->dispatch('confirm-action', [
+                'id' => $id,
+                'message' => trans('vgcomment::comment.report_confirm'),
+                'action' => 'report',
+            ]);
+
+            return;
+        }
+
+        if ($action === 'report') {
+            $comment = CommentServiceFacade::findById((int) $id);
             CommentServiceFacade::report($comment->uuid);
         }
     }
 
-    public function delete($id, $action = 'alert')
+    public function delete($id, string $action = 'alert'): void
     {
-        $this->checkPermission($id, 'delete');
-
-        if ($action == 'alert') {
-            $this->dispatch('confirm-action', ['id' => $id, 'message' => trans('vgcomment::comment.delete_confirm'), 'action' => 'delete']);
+        if (! $this->checkPermission($id, 'delete')) {
+            return;
         }
 
-        if ($action == 'delete') {
-            $comment = CommentServiceFacade::findById($id);
+        if ($action === 'alert') {
+            $this->dispatch('confirm-action', [
+                'id' => $id,
+                'message' => trans('vgcomment::comment.delete_confirm'),
+                'action' => 'delete',
+            ]);
+
+            return;
+        }
+
+        if ($action === 'delete') {
+            $comment = CommentServiceFacade::findById((int) $id);
             CommentServiceFacade::delete($comment->uuid);
         }
     }
 
-    public function listenCommentPosted($result)
+    public function listenCommentPosted($result): void
     {
         if (! $result) {
             return;
@@ -161,18 +165,28 @@ class CommentsComponent extends Component
         $this->reset('editId');
     }
 
-    public function listenCancelEdit()
+    public function listenCancelEdit(): void
     {
         $this->reset('editId');
     }
 
-    public function paginationView()
+    public function paginationView(): string
     {
         return 'livewire-comments::pagination';
     }
 
-    public function listenEchoCommentPosted($event)
+    public function listenEchoCommentPosted($event): void
     {
-        $comment = CommentServiceFacade::findById($event['comment']['id']);
+        // Broadcast refresh hook — list re-renders on next Livewire request.
+    }
+
+    protected function queryPayload(): array
+    {
+        return [
+            'order' => $this->request['order'] ?? 'latest',
+            'page_id' => $this->pageId,
+            'commentable_id' => ! empty($this->commentable) ? $this->commentable->getKey() : null,
+            'commentable_type' => ! empty($this->commentable) ? get_class($this->commentable) : null,
+        ];
     }
 }

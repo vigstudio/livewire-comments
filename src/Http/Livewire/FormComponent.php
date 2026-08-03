@@ -3,29 +3,24 @@
 namespace Vigstudio\LivewireComments\Http\Livewire;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Vigstudio\VgComment\Facades\CommentServiceFacade;
 use Vigstudio\VgComment\Facades\FormatterFacade;
 use Vigstudio\VgComment\Http\Traits\CommentValidator;
-use Vigstudio\VgComment\Facades\CommentServiceFacade;
-use Illuminate\Support\Str;
 
 class FormComponent extends Component
 {
     use Actions\Alert;
-    use WithFileUploads;
     use CommentValidator;
+    use WithFileUploads;
 
-    protected $config;
+    public string $method = 'submit';
 
-    public $method = 'submit';
-
-    public $request = [
+    public array $request = [
         'content' => '',
-        'page_id' => null,
-        'commentable_type' => null,
-        'commentable_id' => null,
         'author_name' => null,
         'author_email' => null,
         'author_url' => null,
@@ -34,24 +29,25 @@ class FormComponent extends Component
         'recaptcha_token' => null,
     ];
 
-    //Clipboard File Data
     public $clipboard = [];
 
-    public $attachments = [];
+    public array $attachments = [];
 
-    public $commentable;
+    #[Locked]
+    public $commentable = null;
 
+    #[Locked]
     public $pageId = null;
 
     public $preview;
 
     public $editId;
 
-    public function mount()
+    public function mount(): void
     {
         if ($this->editId) {
             $this->method = 'edit';
-            $this->request['content'] = CommentServiceFacade::findById($this->editId)?->content;
+            $this->request['content'] = CommentServiceFacade::findById((int) $this->editId)?->content;
         }
 
         if (session()->has('author')) {
@@ -59,10 +55,6 @@ class FormComponent extends Component
             $this->request['author_email'] = session('author.email');
             $this->request['author_url'] = session('author.url');
         }
-
-        $this->request['page_id'] = $this->pageId;
-        $this->request['commentable_id'] = ! empty($this->commentable) ? $this->commentable->id : null;
-        $this->request['commentable_type'] = ! empty($this->commentable) ? get_class($this->commentable) : null;
     }
 
     public function getAuthProperty()
@@ -72,9 +64,7 @@ class FormComponent extends Component
 
     public function getAllowGuestProperty()
     {
-        $allowGuest = Config::get('vgcomment.allow_guests');
-
-        return $allowGuest;
+        return (bool) vgcomment_config()['allow_guests'];
     }
 
     public function render()
@@ -82,90 +72,91 @@ class FormComponent extends Component
         return view('livewire-comments::livewire.form');
     }
 
-    public function submit()
+    public function submit(): void
     {
-        $this->config = Config::get('vgcomment');
+        $payload = $this->payload();
 
-        $this->storeCommentValidator(new Request($this->request))->validate();
+        $this->storeCommentValidator(new Request($payload))->validate();
 
-        $result = CommentServiceFacade::store($this->request);
+        $result = CommentServiceFacade::store($payload);
 
-        if ($result) {
-            CommentServiceFacade::registerFilesForComment($result, $this->attachments);
-            $this->request['content'] = '';
-            $this->request['recaptcha_token'] = '';
-
-            $this->reset('preview', 'attachments');
-
-            $this->dispatch('post-success-comments', $result);
-
-            // $this->dispatchBrowserEvent('post-success-comments');
+        if (! $result) {
+            return;
         }
+
+        CommentServiceFacade::registerFilesForComment($result, $this->attachments);
+
+        $this->request['content'] = '';
+        $this->request['recaptcha_token'] = '';
+        $this->reset('preview', 'attachments');
+
+        $this->dispatch('post-success-comments', $result);
     }
 
-    public function edit()
+    public function edit(): void
     {
-        $this->config = Config::get('vgcomment');
-
         $this->updateCommentValidator(new Request($this->request))->validate();
 
-        try {
-            $comment = CommentServiceFacade::findById($this->editId);
+        $comment = CommentServiceFacade::findById((int) $this->editId);
 
-            $result = CommentServiceFacade::update($this->request, $comment->uuid);
+        if (! $comment || ! vgcomment_policy($comment->id, 'update')) {
+            session()->push('alert', ['error', trans('vgcomment::validation.errors.not_authorized')]);
 
-            $this->request['content'] = '';
-
-            $this->reset('preview');
-
-            $this->reset('editId');
-
-            $this->dispatch('post-success-comments', $comment);
-
-            // $this->dispatchBrowserEvent('post-success-comments');
-        } catch (\Throwable $th) {
-            throw $th;
+            return;
         }
+
+        CommentServiceFacade::update($this->request, $comment->uuid);
+
+        $this->request['content'] = '';
+        $this->reset('preview', 'editId');
+
+        $this->dispatch('post-success-comments', $comment);
     }
 
-    public function uploadFile(String $id)
+    public function uploadFile(string $id)
     {
         $files = CommentServiceFacade::upload($this->clipboard);
 
         $this->reset('clipboard');
 
         if (! $files) {
-            $this->dispatch('insert-content-' . $id, 'false');
+            $this->dispatch('insert-content-'.$id, 'false');
 
             return false;
         }
 
         foreach ($files as $file) {
-            $this->dispatch('insert-content-' . $id, $file);
+            $this->dispatch('insert-content-'.$id, $file);
         }
 
         return $files;
     }
 
-    public function preview()
+    public function preview(): void
     {
-        $render = FormatterFacade::render($this->parse());
-        $this->preview = $render;
+        $this->preview = FormatterFacade::render($this->parse());
     }
 
-    public function cancel()
+    public function cancel(): void
     {
         $this->reset('editId');
         $this->dispatch('cancel-edit');
     }
 
-    public function getErrors()
+    public function getErrors(): void
     {
-        $errors = $this->getErrorBag()->getMessages();
-
-        foreach ($errors as $key => $error) {
+        foreach ($this->getErrorBag()->getMessages() as $error) {
             session()->push('alert', ['error', Str::replace('clipboard.', 'Files Array ', $error)]);
         }
+    }
+
+    protected function payload(): array
+    {
+        return array_merge($this->request, [
+            'page_id' => $this->pageId,
+            'commentable_id' => ! empty($this->commentable) ? $this->commentable->getKey() : null,
+            'commentable_type' => ! empty($this->commentable) ? get_class($this->commentable) : null,
+        ]);
     }
 
     protected function parse()
