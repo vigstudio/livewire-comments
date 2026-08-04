@@ -292,9 +292,22 @@ window.LivewireComments.form = function (cl, id) {
         },
         afterUpload(e) {
             const detail = e?.detail;
-            const files = Array.isArray(detail)
-                ? detail
-                : (detail && Array.isArray(detail.files) ? detail.files : (detail ? [detail] : []));
+            // Livewire puts dispatch params in event.detail:
+            //   named `files:` → { files: [...] }
+            //   positional ['files'=>...] → [{ files: [...] }]  (legacy bug)
+            //   legacy per-file / failure → [file] or ['false']
+            let files = [];
+            if (detail && !Array.isArray(detail) && Array.isArray(detail.files)) {
+                files = detail.files;
+            } else if (Array.isArray(detail)) {
+                if (detail.length === 1 && detail[0] && typeof detail[0] === 'object' && Array.isArray(detail[0].files)) {
+                    files = detail[0].files;
+                } else {
+                    files = detail;
+                }
+            } else if (detail) {
+                files = [detail];
+            }
 
             if (files.length === 1 && files[0] === 'false') {
                 this.setUploading(false);
@@ -305,7 +318,11 @@ window.LivewireComments.form = function (cl, id) {
             const insertIntoContent = Boolean(this._uploadInsertIntoContent);
 
             files.forEach((value) => {
-                if (!value || typeof value !== 'object') {
+                if (!value || typeof value !== 'object' || Array.isArray(value)) {
+                    return;
+                }
+                // Skip wrapper objects that lack file metadata
+                if (!value.uuid && !value.file_name && !value.url_stream && !value.mime && !value.mime_type) {
                     return;
                 }
 

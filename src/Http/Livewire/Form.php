@@ -145,12 +145,12 @@ class Form extends Component
         }
 
         // CommentService::upload returns a FileResource collection — resolve to
-        // plain arrays for the Alpine afterUpload handler / attachments binding.
+        // plain arrays for Alpine. Use a *named* Livewire param (`files:`) so
+        // event.detail is `{ files: [...] }` — a positional `['files' => ...]`
+        // becomes `[{ files: [...] }]`, which Alpine treats as one bogus chip.
         $payload = array_values($files->resolve());
 
-        // Single event with the full batch so the Alpine form can keep
-        // insert-vs-attach mode consistent across every uploaded file.
-        $this->dispatch('insert-content-'.$id, ['files' => $payload]);
+        $this->dispatch('insert-content-'.$id, files: $payload);
 
         return $payload;
     }

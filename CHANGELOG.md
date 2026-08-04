@@ -2,6 +2,12 @@
 
 All notable changes to `livewire-comments` will be documented in this file
 
+## 2.0.7 - 2026-08-04
+
+- Fix upload event payload shape: dispatch named `files:` so Alpine gets real FileResource metadata (image thumbnails / filenames)
+- Insert-image path inserts markdown again; paperclip keeps attachment chips with previews
+- Harden afterUpload against legacy positional `[{ files: [...] }]` wrappers that rendered generic "file" chips and caused submit 500s
+
 ## 2.0.6 - 2026-08-04
 
 - Fix Livewire image upload crashing after temp upload (`array_values()` on FileResource collection), which surfaced as a CSRF/419 “page expired” dialog
