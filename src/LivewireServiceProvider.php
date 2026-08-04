@@ -4,8 +4,6 @@ namespace Vigstudio\LivewireComments;
 
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
-use Vigstudio\LivewireComments\Http\Livewire\CommentsComponent;
-use Vigstudio\LivewireComments\Http\Livewire\FormComponent;
 
 class LivewireServiceProvider extends ServiceProvider
 {
@@ -16,7 +14,13 @@ class LivewireServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Livewire::component('livewire-comments::comments', CommentsComponent::class);
-        Livewire::component('livewire-comments::form', FormComponent::class);
+        // Livewire 4: namespaced package components use addNamespace (`::`).
+        // Explicit Livewire::component('pkg::name') is ignored for `::` names.
+        Livewire::addNamespace(
+            namespace: 'livewire-comments',
+            classNamespace: 'Vigstudio\\LivewireComments\\Http\\Livewire',
+            classPath: __DIR__ . '/Http/Livewire',
+            classViewPath: __DIR__ . '/../resources/views/livewire',
+        );
     }
 }

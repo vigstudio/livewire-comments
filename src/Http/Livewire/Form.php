@@ -11,7 +11,7 @@ use Vigstudio\VgComment\Facades\CommentServiceFacade;
 use Vigstudio\VgComment\Facades\FormatterFacade;
 use Vigstudio\VgComment\Http\Traits\CommentValidator;
 
-class FormComponent extends Component
+class Form extends Component
 {
     use Actions\Alert;
     use CommentValidator;

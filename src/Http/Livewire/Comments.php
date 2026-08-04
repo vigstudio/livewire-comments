@@ -7,7 +7,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Vigstudio\VgComment\Facades\CommentServiceFacade;
 
-class CommentsComponent extends Component
+class Comments extends Component
 {
     use Actions\Alert;
     use WithPagination;
