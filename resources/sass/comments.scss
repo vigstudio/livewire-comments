@@ -5,6 +5,34 @@
 @import 'plyr/dist/plyr.css';
 @import 'highlight.js/styles/vs2015.css';
 
+/*
+ | Plyr ships bare `svg` / `img` rules that leak into the host app
+ | (Jetstream nav icons, logos, etc.). Revert those globals and keep
+ | player sizing under `.plyr`.
+ */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+svg:not(.plyr svg):not(.plyr *) {
+    width: auto;
+    height: auto;
+    max-width: none;
+    display: inline-block;
+    fill: currentColor;
+    pointer-events: auto;
+}
+
+.plyr svg,
+.plyr__controls svg {
+    display: block;
+    width: var(--plyr-control-icon-size, 18px);
+    height: var(--plyr-control-icon-size, 18px);
+    fill: currentColor;
+    pointer-events: none;
+}
+
 .grecaptcha-badge {
     visibility: hidden;
 }

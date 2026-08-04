@@ -1,11 +1,14 @@
-const colors = require('tailwindcss/colors');
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     content: [
         './resources/views/**/*.blade.php',
         './resources/js/**/*.js',
     ],
+    // Package CSS is loaded after the host app; Tailwind preflight would
+    // override host button utilities (e.g. Jetstream login) until :hover.
+    corePlugins: {
+        preflight: false,
+    },
     theme: {
         extend: {
             colors: {

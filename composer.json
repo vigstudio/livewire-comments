@@ -1,6 +1,6 @@
 {
     "name": "vigstudio/livewire-comments",
-    "description": "Livewire comments packages use backend by vgcomments",
+    "description": "Livewire 4 comments UI backed by vgcomments",
     "keywords": [
         "vigstudio",
         "livewire-comments",
@@ -12,23 +12,23 @@
     "homepage": "https://github.com/vigstudio/livewire-comments",
     "license": "MIT",
     "type": "laravel-library",
-    "version": "1.2.0",
+    "version": "2.0.0",
     "authors": [
         {
             "name": "Nghiane.com",
-            "email": "vingadev@gmail.com",
+            "email": "vingamagic@gmail.com",
             "role": "Developer"
         }
     ],
     "require": {
         "php": "^8.2",
-        "vigstudio/vgcomments": "^1.2.0",
-        "livewire/livewire": "^3.6",
+        "vigstudio/vgcomments": "^2.0",
+        "livewire/livewire": "^4.0",
         "archielite/laravel-heroicons": "^0.2.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^8.0|^9.0|^10.0",
-        "phpunit/phpunit": "^10.0|^11.0"
+        "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
+        "phpunit/phpunit": "^10.0|^11.0|^12.0"
     },
     "autoload": {
         "psr-4": {

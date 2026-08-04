@@ -55,7 +55,7 @@ class LivewireCommentsServiceProvider extends ServiceProvider
         });
 
         Blade::directive('commentScripts', function ($expression) {
-            return "<?php \$script = '<script src=\"https://www.google.com/recaptcha/api.js?render='.e(\\Illuminate\\Support\\Facades\\Config::get('vgcomment.recaptcha_key')).'\"></script>'; \$script .= '<script src=\"'.e(asset('vendor/livewire-comments/js/comments.js')).'?v='.e(@filemtime(public_path('vendor/livewire-comments/js/comments.js')) ?: time()).'\"></script>'; echo \$script; ?>";
+            return "<?php \$scripts = ''; if (\\Illuminate\\Support\\Facades\\Config::get('vgcomment.recaptcha')) { \$scripts .= '<script src=\"https://www.google.com/recaptcha/api.js?render='.e(\\Illuminate\\Support\\Facades\\Config::get('vgcomment.recaptcha_key')).'\"></script>'; } \$scripts .= '<script src=\"'.e(asset('vendor/livewire-comments/js/comments.js')).'?v='.e(@filemtime(public_path('vendor/livewire-comments/js/comments.js')) ?: time()).'\"></script>'; echo \$scripts; ?>";
         });
     }
 
