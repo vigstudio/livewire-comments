@@ -31,7 +31,7 @@
                 </div>
 
                 <div class="vgcomments_confirm-container-content-div-footer">
-                    <button type="button" x-on:click="$wire.emit('confirm-submit', id, action)" class="vgcomments_confirm-container-content-div-footer-button" @click="open = false"> {{ __('vgcomment::comment.submit') }}</button>
+                    <button type="button" x-on:click="$wire.confirmAction(id, action)" class="vgcomments_confirm-container-content-div-footer-button" @click="open = false"> {{ __('vgcomment::comment.submit') }}</button>
                     <button type="button" class="vgcomments_confirm-container-content-div-footer-button-cancel" @click="open = false"> {{ __('vgcomment::comment.cancel') }}</button>
                 </div>
             </div>

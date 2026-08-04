@@ -1,159 +1,145 @@
 @php
-    $id = Str::uuid();
+    $id = $this->formKey;
+    $canCompose = $this->auth || $this->allow_guest;
 @endphp
-<div @disabled(!$this->auth && !$this->allow_guest)
+<div
      wire:ignore.self
-     x-data="LivewireComments.form('.textarea-vgcomment-box', '{{ $id }}', $wire)"
-     x-init="emojiPicker('.emoji-button')"
+     x-data="LivewireComments.form('.textarea-vgcomment-box', @js($id))"
      @insert-content-{{ $id }}.window="afterUpload($event)"
      @post-success-comments.window="cleanData()"
-     @open-form.window="$event.detail.open_id == {{ $request['parent_id'] ?: 0 }} ? open = true : open = false">
-    <form wire:submit.prevent
-          x-data="{
-              request: @entangle('request'),
-              async submit() {
-                  @if (Config::get('vgcomment.recaptcha')) this.request.recaptcha_token = await grecaptcha.execute(@js(Config::get('vgcomment.recaptcha_key')), { action: '{{ $method }}' }); @endif
-                  $wire.{{ $method }}();
-              }
-          }">
+     @open-form.window="open = ($event.detail?.open_id == {{ $request['parent_id'] ?: 0 }})"
+>
+    <form
+        class="vg-composer"
+        wire:submit.prevent
+        data-recaptcha="{{ Config::get('vgcomment.recaptcha') ? '1' : '0' }}"
+        data-recaptcha-key="{{ Config::get('vgcomment.recaptcha_key') }}"
+        data-submit-method="{{ $method }}"
+    >
+        @include('livewire-comments::livewire.form.guest')
 
+        <div class="vg-composer__body @error('content') vgcomments_alert_required @enderror">
+            @if ($showingPreview)
+                <div class="vg-composer__preview" wire:key="preview-{{ $formKey }}">
+                    @if ($previewHtml !== '' && $previewHtml !== null)
+                        {!! $previewHtml !!}
+                    @else
+                        <p class="text-xs text-gray-400">{{ __('vgcomment::comment.placeholder_textarea') }}</p>
+                    @endif
+                </div>
+            @else
+                <textarea
+                    x-ref="composer"
+                    @class([
+                        'textarea-vgcomment-box',
+                        'vg-composer__textarea',
+                        'is-disabled' => ! $canCompose,
+                        'validate-error' => $errors->has('content'),
+                    ])
+                    wire:model="request.content"
+                    x-on:input="draft = $event.target.value"
+                    x-on:paste="pasteClipboard($event)"
+                    x-on:drop.prevent="dropFile($event)"
+                    rows="4"
+                    maxlength="{{ config('vgcomment.max_length') }}"
+                    placeholder="{{ __('vgcomment::comment.placeholder_textarea') }}"
+                    @disabled(! $canCompose)
+                ></textarea>
+            @endif
 
+            @error('content')
+                <span class="vgcomments_alert_required_text px-3 pb-2 block">{{ $message }}</span>
+            @enderror
+        </div>
 
-        <div class="vcomments__form">
-            @include('livewire-comments::livewire.form.guest')
+        <div class="vg-composer__attachments" x-show="files.length" x-cloak>
+            <template x-for="(file, index) in files" :key="file.uuid || file.file_name || index">
+                <div class="vg-file vg-file--chip" x-bind:class="(file.mime === 'image' || (file.mime_type || '').startsWith('image/')) ? 'vg-file--image' : 'vg-file--doc'">
+                    <template x-if="file.mime === 'image' || (file.mime_type || '').startsWith('image/')">
+                        <img class="vg-file__thumb" x-bind:src="file.url_stream" x-bind:alt="file.file_name || file.name || 'image'" loading="lazy">
+                    </template>
+                    <template x-if="!(file.mime === 'image' || (file.mime_type || '').startsWith('image/'))">
+                        <span class="vg-file__icon" aria-hidden="true">📄</span>
+                    </template>
+                    <span class="vg-file__meta">
+                        <span class="vg-file__name" x-text="getFileName(file.file_name || file.name || 'file')"></span>
+                    </span>
+                    <button type="button" class="vg-file__remove" title="Remove" aria-label="Remove attachment" x-on:click.prevent="removeAttachment(index)">×</button>
+                </div>
+            </template>
+        </div>
 
-            <div class="vcomments__form__header">
-
-                <div class="vcomments__header__tooltips-group">
-
-                    <button @disabled(!$this->auth && !$this->allow_guest) x-show="tab == 2" x-on:click="tab = 1" type="button" class="vcomments__btn secondary">
-                        <x-heroicons::icon name="eye-slash-o" class="vgcomemnt_icon-5" />
-                        <span class="vgcomments__header_title"></span>
+        <div class="vg-composer__toolbar">
+            <div class="vg-composer__tools">
+                @if ($showingPreview)
+                    <button @disabled(! $canCompose) wire:click="closePreview" type="button" class="vg-icon-btn" title="{{ __('vgcomment::comment.edit') }}">
+                        <x-heroicons::icon name="eye-slash-o" class="vg-icon" />
+                        <span class="vg-icon-btn__label">{{ __('vgcomment::comment.edit') }}</span>
+                    </button>
+                @else
+                    <button @disabled(! $canCompose) x-on:click="showPreview()" type="button" class="vg-icon-btn" title="{{ __('vgcomment::comment.preview') }}">
+                        <x-heroicons::icon name="eye-o" class="vg-icon" />
+                        <span class="vg-icon-btn__label">{{ __('vgcomment::comment.preview') }}</span>
                     </button>
 
-                    <button @disabled(!$this->auth && !$this->allow_guest) x-show="tab == 1" x-on:click="tab = 2" type="button" class="vcomments__btn secondary" wire:click="preview">
-                        <x-heroicons::icon name="eye-o" class="vgcomemnt_icon-5" />
-                        <span class="vgcomments__header_title">{{ __('vgcomment::comment.preview') }}</span>
-                    </button>
-
-                </div>
-
-                <div>
-                    <x-livewire-comments::loading wire:loading />
-                    <span x-text="'Uploading....' + progress + '%'" x-show="loading"></span>
-                </div>
-
-                <div class="vcomments__header__tooltips-group">
-
-                    <div class="vcomments__header__group">
-
-                        <input x-ref="uploadFiles" x-on:change="uploadFile($event)" type="file" class="sr-only" multiple="true">
-
-                        <button @disabled(!$this->auth && !$this->allow_guest) type="button" class="emoji-button vcomments__btn secondary" data-popover-target="emoji">
-                            <x-heroicons::icon name="face-smile-s" class="vgcomemnt_icon-4" />
+                    <div class="vg-composer__formats" role="toolbar" aria-label="Formatting">
+                        <button @disabled(! $canCompose) type="button" class="vg-icon-btn" title="Bold" x-on:mousedown.prevent="wrapSelection('**', '**', 'bold')">
+                            <span class="vg-fmt vg-fmt--bold">B</span>
                         </button>
-
-
-
-                        <button @disabled(!$this->auth && !$this->allow_guest) type="button" class="vcomments__btn secondary" x-on:click="$refs.uploadFiles.click()">
-
-                            <x-heroicons::icon name="paper-clip-s" class="vgcomemnt_icon-4" />
-
+                        <button @disabled(! $canCompose) type="button" class="vg-icon-btn" title="Italic" x-on:mousedown.prevent="wrapSelection('*', '*', 'italic')">
+                            <span class="vg-fmt vg-fmt--italic">I</span>
+                        </button>
+                        <button @disabled(! $canCompose) type="button" class="vg-icon-btn" title="Strikethrough" x-on:mousedown.prevent="wrapSelection('~~', '~~', 'strike')">
+                            <span class="vg-fmt vg-fmt--strike">S</span>
+                        </button>
+                        <button @disabled(! $canCompose) type="button" class="vg-icon-btn" title="Code" x-on:mousedown.prevent="wrapSelection('`', '`', 'code')">
+                            <x-heroicons::icon name="code-bracket-o" class="vg-icon" />
+                        </button>
+                        <button @disabled(! $canCompose) type="button" class="vg-icon-btn" title="Quote" x-on:mousedown.prevent="wrapSelection('> ', '', 'quote')">
+                            <x-heroicons::icon name="chat-bubble-bottom-center-text-o" class="vg-icon" />
+                        </button>
+                        <button @disabled(! $canCompose) type="button" class="vg-icon-btn" title="Link" x-on:mousedown.prevent="insertLink()">
+                            <x-heroicons::icon name="link-o" class="vg-icon" />
                         </button>
                     </div>
+                @endif
 
-                </div>
+                <span class="vg-composer__sep" aria-hidden="true"></span>
 
-            </div>
-
-            <div class="vcomments__form__body @error('content') vgcomments_alert_required @enderror">
-
-                <x-livewire-comments::forms.preview x-show="tab == 2" :preview="$preview" />
-
-                <x-livewire-comments::forms.textarea
-                                                     @class([
-                                                         'textarea-vgcomment-box',
-                                                         'disabled' => !$this->auth && !$this->allow_guest,
-                                                         'validate-error' => $errors->has('content'),
-                                                     ])
-                                                     wire:model="request.content"
-                                                     x-show="tab == 1"
-                                                     x-on:paste="pasteClipboard($event)"
-                                                     x-on:drop.prevent="dropFile($event)"
-                                                     rows="4"
-                                                     maxlength="{{ config('vgcomment.max_length') }}"
-                                                     placeholder="{{ __('vgcomment::comment.placeholder_textarea') }}" />
-
-                @error('content')
-                    <span class="vgcomments_alert_required_text">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <div class="vcomments__form__attachments">
-                <template x-for="file in files">
-                    <a x-show="!file.mime_type.includes('image')" x-bind:href="file.url_stream" target="_blank" class="vcomments__file">
-                        <x-heroicons::icon name="paper-clip-s" class="vgcomemnt_icon-4" />
-                        <span class="vgcomment_w-full" x-text="getFileName(file.file_name) + ' - ' + (file.size / 1000).toFixed(2) + ' KB'"></span>
-                    </a>
-                </template>
-            </div>
-
-            <div class="vcomments__form__footer">
-                <div>
-
-                    <button
-                            type="button"
-                            x-on:click="submit()"
-                            @disabled(!$this->auth && !$this->allow_guest)
-                            @class([
-                                'vcomments__btn',
-                                'disabled' => !$this->auth && !$this->allow_guest,
-                                'primary' => $this->auth || $this->allow_guest,
-                            ])
-                            wire:loading.attr="disabled">
-
-                        {{ __('vgcomment::comment.submit') }}
-
-                        <svg
-                             wire:loading
-                             class="vgcomment__svg_loading"
-                             xmlns="http://www.w3.org/2000/svg"
-                             fill="none"
-                             viewBox="0 0 24 24">
-                            <circle
-                                    class="vgcomment_opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    stroke-width="4"></circle>
-                            <path
-                                  class="vgcomment_opacity-75"
-                                  fill="currentColor"
-                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-
+                <div class="vg-composer__media">
+                    <input x-ref="uploadFiles" x-on:change="uploadFile($event)" type="file" class="sr-only" multiple="true">
+                    <input x-ref="uploadImages" x-on:change="uploadInlineImage($event)" type="file" class="sr-only" accept="image/*">
+                    <button @disabled(! $canCompose) type="button" class="vg-icon-btn emoji-button" title="Emoji">
+                        <x-heroicons::icon name="face-smile-o" class="vg-icon" />
                     </button>
-
-                    @if ($this->editId)
-                        <button type="button" wire:click="cancel" class="vcomments__btn secondary vgcomment_ml-2" wire:loading.attr="disabled">
-                            {{ __('vgcomment::comment.cancel') }}
-                        </button>
-                    @endif
-
+                    <button @disabled(! $canCompose) type="button" class="vg-icon-btn" x-on:click="$refs.uploadImages.click()" title="Insert image">
+                        <x-heroicons::icon name="photo-o" class="vg-icon" />
+                    </button>
+                    <button @disabled(! $canCompose) type="button" class="vg-icon-btn" x-on:click="$refs.uploadFiles.click()" title="Attach file">
+                        <x-heroicons::icon name="paper-clip-s" class="vg-icon" />
+                    </button>
                 </div>
 
-                <div class="vcomments__footer__tooltips-group">
-                    <span x-show="loading">{{ __('vgcomment::comment.uploading') }}</span>
+                <x-livewire-comments::loading wire:loading />
+                <span class="text-xs text-gray-500" x-text="'Uploading… ' + progress + '%'" x-show="loading"></span>
+            </div>
 
-                    <a class="vcomments__footer__tooltips">
-                        <span x-show="tab == 1" class="vgcomment_text-xs vgcomemnt_text-end" x-text="textarea_length + '/{{ config('vgcomment.max_length') }}'"></span>
-                    </a>
-                </div>
-
+            <div class="inline-flex items-center gap-2">
+                @if ($this->editId)
+                    <button type="button" wire:click="cancel" class="vg-text-btn" wire:loading.attr="disabled">
+                        {{ __('vgcomment::comment.cancel') }}
+                    </button>
+                @endif
+                <button
+                    type="button"
+                    x-on:click="submit()"
+                    @disabled(! $canCompose)
+                    class="vg-btn vg-btn--primary"
+                    wire:loading.attr="disabled"
+                >
+                    {{ __('vgcomment::comment.submit') }}
+                </button>
             </div>
         </div>
     </form>
-
-
 </div>

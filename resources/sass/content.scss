@@ -27,21 +27,15 @@
 
     p {
         @apply break-all;
-
-    }
-
-    p:has(> img) {
-        @apply container mx-auto space-y-2 lg:space-y-0 lg:gap-2 lg:grid lg:grid-cols-3;
-        br {
-            display: none;
-        }
-        img {
-            @apply w-full rounded;
-        }
     }
 
     img {
-        @apply max-w-xs h-auto;
+        max-width: min(100%, 20rem);
+        max-height: 240px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border-radius: 0.375rem;
     }
 
     .vgcomments__video {

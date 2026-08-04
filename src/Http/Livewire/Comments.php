@@ -89,6 +89,28 @@ class Comments extends Component
         CommentServiceFacade::deleteReaction($uuid, $type);
     }
 
+    public function toggleReact(string $uuid, string $type): void
+    {
+        $comment = CommentServiceFacade::findByUuid($uuid);
+
+        if (! $comment) {
+            return;
+        }
+
+        $userReacted = $comment->reactions()
+            ->where('type', $type)
+            ->get()
+            ->contains(fn ($reaction) => (bool) $reaction->user_reacted);
+
+        if ($userReacted) {
+            CommentServiceFacade::deleteReaction($uuid, $type);
+
+            return;
+        }
+
+        CommentServiceFacade::reaction($uuid, $type);
+    }
+
     public function edit($id): bool
     {
         if (! $this->checkPermission($id, 'update')) {

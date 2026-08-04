@@ -5,19 +5,84 @@
 @import 'plyr/dist/plyr.css';
 @import 'highlight.js/styles/vs2015.css';
 
+[x-cloak] {
+    display: none !important;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+.vg-emoji-picker {
+    @apply absolute left-0 top-full z-50 mt-2 flex w-[22rem] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl;
+    height: 22rem;
+    max-height: min(22rem, 70vh);
+
+    &--above {
+        @apply bottom-full top-auto mb-2 mt-0;
+    }
+
+    /* Closed: never leave an invisible hit-target over the composer */
+    &[hidden],
+    &:not(.is-open) {
+        display: none !important;
+        pointer-events: none !important;
+        visibility: hidden;
+    }
+
+    &.is-open {
+        pointer-events: auto;
+        visibility: visible;
+    }
+}
+
+/* Non-scrolling chrome: search + category tabs stay above the grid */
+.vg-emoji-picker__header {
+    @apply relative z-10 flex shrink-0 flex-col border-b border-gray-200 bg-white;
+}
+
+.vg-emoji-picker__search {
+    @apply shrink-0 bg-white p-2;
+}
+
+.vg-emoji-picker__input {
+    @apply w-full rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-sm text-gray-700 focus:border-sky-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-sky-500;
+}
+
+.vg-emoji-picker__tabs {
+    @apply relative z-0 flex shrink-0 gap-0.5 overflow-x-auto border-t border-gray-100 bg-gray-50 px-1.5 py-1.5;
+}
+
+.vg-emoji-picker__tab {
+    @apply relative z-0 inline-flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-md text-base leading-none hover:bg-white;
+
+    &.is-active {
+        @apply bg-white shadow-sm ring-1 ring-gray-200;
+    }
+}
+
+.vg-emoji-picker__grid {
+    @apply relative z-0 grid min-h-0 flex-1 grid-cols-8 content-start gap-1 overflow-x-hidden overflow-y-auto px-2 pb-2 pt-2.5;
+}
+
+.vg-emoji-picker__item {
+    @apply inline-flex h-8 w-8 items-center justify-center overflow-hidden rounded-md text-lg leading-none hover:bg-sky-50;
+}
+
 /*
  | Plyr ships bare `svg` / `img` rules that leak into the host app.
  | Revert globals WITHOUT forcing fill (outline Heroicons use fill="none"
  | + stroke; fill:currentColor turns them into solid blobs).
+ | Do NOT set width/height:unset here — that selector beats .vg-icon /
+ | .vgcomemnt_icon-* / Tailwind size utilities and blows SVGs to full width.
  */
-img:not(.plyr *):not(.plyr) {
+/* Exclude chip thumbs — height:auto here would blow composer previews to full width. */
+img:not(.plyr *):not(.plyr):not(.vg-file__thumb) {
     max-width: 100%;
     height: auto;
 }
 
 svg:not(.plyr *):not(.plyr) {
-    width: unset;
-    height: unset;
     max-width: none;
     display: inline-block;
     /* Do not set fill — outline Heroicons need fill="none" from the SVG attribute.
@@ -37,6 +102,11 @@ svg:not(.plyr *):not(.plyr) {
     display: block;
 }
 
+/* Outline Heroicons ship fill="none"; never let inherited currentColor solid-fill them */
+.svg-icon svg[fill='none'] {
+    fill: none !important;
+}
+
 .plyr svg,
 .plyr__controls svg {
     display: block;
@@ -50,561 +120,474 @@ svg:not(.plyr *):not(.plyr) {
     visibility: hidden;
 }
 
-.disabled {
-    @apply bg-gray-100 cursor-not-allowed;
+
+.vg-box {
+    @apply w-full text-sm text-gray-800;
+    --vg-border: #d0d7de;
+    --vg-muted: #656d76;
+    --vg-bg: #ffffff;
+    --vg-soft: #f6f8fa;
+    --vg-accent: #0969da;
+    --vg-danger: #cf222e;
 }
 
-.vgcomment_box {
-    @apply mb-4 w-full bg-white;
+.vg-alerts {
+    @apply mb-3 space-y-2;
+}
 
-    .vgcomment_box_navbar {
-        @apply flex justify-between items-center mb-6 border-b-2 border-gray-400 px-4;
+.vcomments-alert {
+    @apply rounded-md border px-3 py-2 text-sm;
 
-        .vgcomment_box_navbar-title {
-            @apply text-lg lg:text-2xl font-bold text-gray-900;
-        }
+    &--success { @apply border-emerald-200 bg-emerald-50 text-emerald-800; }
+    &--error { @apply border-red-200 bg-red-50 text-red-800; }
+}
 
-        .vgcomment_box_navbar-dropdown {
-            @apply flex justify-between items-center mb-2;
+.vg-icon,
+svg.vg-icon {
+    @apply h-4 w-4 shrink-0;
+}
 
-            .vgcomment_box_navbar_dropdown-group {
-                @apply flex justify-between;
+.vg-icon-btn {
+    @apply inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-50;
 
-                .vgcomment_box_navbar_dropdown-select {
-                    @apply mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm;
-                }
-            }
-        }
-    }
+    &__label { @apply text-xs font-medium; }
+}
 
-    .vcomment-row {
-        @apply mb-6 text-base bg-gray-50 border  border-gray-200;
+.vg-text-btn {
+    @apply inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-100 hover:text-gray-900;
+}
 
-        &.children {
-            @apply ml-3 mt-2 lg:ml-12;
-        }
+.vg-btn {
+    @apply inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-semibold transition;
 
-        &.active {
-            @apply border-l-4 bg-sky-100 border-sky-300;
-        }
-
-        .vgcomment__header {
-            @apply flex justify-between items-center px-4 py-2;
-
-            .vgcomment__author {
-                @apply flex justify-between items-center mr-3 text-sm text-gray-900 ;
-
-                .vgcomment__avatar {
-                    @apply m-1 mr-2 w-8 h-8 relative flex justify-center items-center rounded-full bg-gray-500 text-xl text-white;
-
-                    .avatar__image {
-                        @apply items-center;
-                    }
-
-                    .avatar--badge {
-                        @apply top-[80%] absolute inline-flex items-center rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800;
-                    }
-                }
-
-                .vgcomment__info {
-                    @apply ml-3 text-xs font-bold leading-tight;
-
-                    .vgcomment__time {
-                        @apply leading-5 text-gray-600 ;
-                    }
-
-                    .vgcomment__reply_text {
-                        @apply leading-3 italic subpixel-antialiased font-thin text-right text-gray-500 ;
-                    }
-                }
-            }
-
-            .vgcomment__dropdown {
-                @apply relative inline-block text-left;
-
-                .vgcomment__dropdown_btn {
-                    @apply flex items-center rounded-full vcomments__btn none;
-                }
-
-                .vgcomment__dropdown-menu {
-                    @apply absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none;
-
-                    .vgcomment__py-1 {
-                        @apply py-1;
-                    }
-
-                    .vgcomment__not_select {
-                        @apply text-gray-700;
-                    }
-
-                    .vgcomment_select {
-                        @apply bg-gray-100 text-gray-900;
-                    }
-                }
-
-                .vgcomment__dropdown-menu--item {
-                    @apply block px-4 py-2 text-sm text-gray-700;
-
-                    &.active {
-                        @apply bg-gray-100 text-gray-900;
-                    }
-                }
-            }
-        }
-
-        .vgcomment__body {
-            @apply px-6 py-4 bg-white min-h-[0px] font-light text-gray-800;
-
-            @include comment__formatter;
-
-        }
-
-        .vgcomment__footer {
-            @apply flex justify-between bg-white items-center py-2 px-4 border-b border-gray-200;
-
-            .vgcomment__reactions {
-                @apply flex items-center mt-4 space-x-4;
-
-                .reactions__group {
-                    @apply py-2 font-bold leading-tight;
-
-                    .emoji {
-                        @apply ml-1;
-                    }
-                    .text {
-                        @apply ml-1 font-black;
-                    }
-                }
-
-            }
-
-            .footer__tooltips-group {
-                @apply flex pl-0 space-x-1 sm:pl-2;
-
-                .footer__tooltips {
-                    @apply inline-flex text-sm justify-center p-1 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100;
-
-
-                }
-
-
-            }
-        }
-
-        .vgcomment__attachments {
-            @apply py-2 px-4 bg-white rounded-b-lg ;
-
-            .file {
-                @apply inline-flex justify-center text-xs items-center p-1.5 font-medium text-gray-500 bg-gray-50 rounded-lg hover:text-gray-900 hover:bg-gray-100;
-            }
-        }
-
-        .vgcomment__replybox {
-            @apply bg-white px-6 py-4;
-        }
-    }
-
-    .vgcomment_box-pagination {
-        @apply flex items-center justify-between;
-
-        .vgcomment_box_pagination-mobile-mode {
-            @apply flex justify-between flex-1 sm:hidden;
-
-            .vgcomment_box_pagination-previous-span {
-                @apply relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5 rounded-md select-none;
-            }
-            .vgcomment_box_pagination-next-span {
-                @apply relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5 rounded-md select-none;
-            }
-
-            .vgcomment_box_pagination-previous-button {
-                @apply relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 rounded-md hover:text-gray-500 focus:outline-none focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150;
-            }
-            .vgcomment_box_pagination-next-button {
-                @apply relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 rounded-md hover:text-gray-500 focus:outline-none focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150;
-            }
-        }
-
-        .vgcomment_box_pagination-desktop-mode {
-            @apply hidden sm:flex-1 sm:flex sm:items-center sm:justify-between;
-
-            .vgcomment_box_pagination-desktop-mode-title {
-                @apply text-sm text-gray-700 leading-5;
-            }
-
-            .vgcomment_box_pagination-desktop-mode-group {
-                @apply relative z-0 inline-flex rounded-md shadow-sm;
-
-                .vgcomment_box_pagination-desktop-mode-page-link {
-                    @apply relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-l-md leading-5;
-                }
-
-                .vgcomment_box_pagination-desktop-mode-page-link-button {
-                    @apply relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150;
-                }
-
-                .vgcomment_box_pagination-desktop-mode-page-dot {
-                    @apply relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5 select-none;
-                }
-
-                .vgcomment_box_pagination-desktop-mode-page-array-link {
-                    @apply relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5 select-none;
-                }
-
-                .vgcomment_box_pagination-desktop-mode-page-array-button {
-                    @apply relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150;
-                }
-
-                .vgcomment_box_pagination-desktop-mode-page-link-next {
-                    @apply relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-r-md leading-5;
-                }
-
-                .vgcomment_box_pagination-desktop-mode-page-link-button-next {
-                    @apply relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150;
-                }
-            }
-        }
+    &--primary {
+        @apply bg-emerald-600 text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50;
     }
 }
 
-.vcomments__form {
+.vg-fmt {
+    @apply text-xs font-semibold leading-none;
+    &--bold { @apply font-bold; }
+    &--italic { @apply italic; }
+    &--strike { @apply line-through; }
+}
 
-    @apply mb-4 w-full bg-gray-50 rounded-lg border border-gray-200;
+.vg-composer {
+    /* overflow:visible so the absolute emoji picker can extend outside the card */
+    @apply mb-6 overflow-visible rounded-lg border bg-white;
+    border-color: var(--vg-border);
+}
 
-    .vcomments__form__guest {
-        @apply flex flex-wrap gap-2 py-2 px-3 border-b text-sm font-medium;
+.vg-reply-banner {
+    @apply border-b px-3 py-2 text-sm;
+    background: #ddf4ff;
+    border-color: #54aeff66;
+    color: #0550ae;
+}
 
-        .vgcomments__form__guest__input {
-            @apply block w-full py-1.5 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder:text-gray-400;
+.vg-reply-banner__row {
+    @apply flex items-center justify-between gap-3;
+}
 
-            &.validate-error {
-                @apply border-2 border-red-300;
-            }
-        }
+.vg-composer__guest {
+    @apply grid gap-2 border-b p-3 sm:grid-cols-3;
+    border-color: var(--vg-border);
+    background: var(--vg-soft);
 
-        .vgcomments_alert_required_text {
-            @apply block mt-1 text-sm text-red-600;
-        }
-    }
-
-    .vcomments__form__header {
-        @apply flex justify-between items-center py-2 px-3 border-b;
-
-        .vcomments__header__tooltips-group {
-            @apply flex flex-wrap items-center;
-
-            .vcomments__header__group {
-                @apply flex items-center space-x-1 sm:pr-4;
-            }
-
-            .vgcomments__header_title {
-                @apply pl-2 hidden sm:flex;
-            }
-        }
-    }
-
-    .vcomments__form__body {
-        @apply py-2 px-4 bg-white rounded-b-lg ;
-
-        .vcomments__form__body--preview {
-            @apply px-0 py-1 bg-white min-h-[100px] font-light text-gray-500;
-
-            @include comment__formatter;
-        }
-
-        .vcomments__form__textarea {
-            @apply block px-0 w-full bg-white text-gray-500 border-0 focus:ring-0 ;
-
-            &.disabled {
-                @apply bg-gray-100 cursor-not-allowed;
-            }
-        }
-
-        &.vgcomments_alert_required {
-            @apply border border-red-600;
-        }
-
-        .vgcomments_alert_required_text {
-            @apply block mt-1 text-sm text-red-600;
-        }
-
-    }
-
-    .vcomments__form__attachments {
-        @apply py-2 px-4 bg-white rounded-b-lg ;
-
-        .fvcomments__ile {
-            @apply inline-flex justify-center text-xs items-center p-1.5 font-medium text-gray-500 bg-gray-50 rounded-lg hover:text-gray-900 hover:bg-gray-100;
-        }
-    }
-
-    .vcomments__form__footer {
-        @apply flex justify-between items-center py-2 px-3 border-t;
-
-        .vcomments__footer__tooltips-group {
-            @apply flex pl-0 space-x-1 sm:pl-2;
-
-            .vcomments__footer__tooltips {
-                @apply inline-flex text-xs justify-center p-1 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100;
-
-                .vcomments__footer__tooltips--text {
-                    @apply pl-2 hidden md:flex;
-                }
-            }
-        }
-    }
-
-    .validate-error {
-        @apply border-2 border-red-300;
+    input {
+        @apply w-full rounded-md border border-gray-300 px-2.5 py-1.5 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500;
     }
 }
 
-.vcomments__btn {
-    @apply inline-flex items-center py-2 px-2 text-xs font-medium text-center;
+.vg-composer__login {
+    @apply px-3 py-2 text-sm text-gray-600;
+}
 
-    &.disabled {
-        @apply cursor-not-allowed bg-gray-600 text-white;
-    }
+.vg-composer__body {
+    @apply bg-white;
+}
 
-    &.primary {
-        @apply text-white bg-blue-700 hover:bg-blue-400 hover:text-gray-900 rounded-lg focus:ring-1 focus:ring-blue-200;
-    }
+.vg-composer__textarea {
+    @apply block w-full resize-y border-0 bg-white px-3 py-3 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-0;
+    min-height: 96px;
+}
 
-    &.danger {
-        @apply text-white bg-red-700 hover:bg-red-400 hover:text-gray-900 rounded-lg focus:ring-1 focus:ring-blue-200;
-    }
+.vg-composer__preview {
+    @apply min-h-[96px] px-3 py-3 text-sm text-gray-700;
+    @include comment__formatter;
+}
 
-    &.primary-tone {
-        @apply text-blue-900 bg-blue-100 rounded-lg focus:ring-1 focus:ring-blue-600;
-    }
+.vg-composer__attachments {
+    @apply flex flex-wrap gap-2 px-3 pb-2;
 
-    &.secondary {
-        @apply text-gray-700 bg-gray-200 rounded-lg focus:ring-1 focus:ring-gray-200;
-    }
-
-    &.none {
-        @apply text-gray-700 bg-gray-50 hover:bg-white rounded-lg focus:ring-1 focus:ring-gray-200;
-    }
-
-    &.active {
-        @apply text-gray-700 bg-purple-300 hover:bg-white rounded-lg focus:ring-1 focus:ring-gray-200;
+    &:empty {
+        display: none;
     }
 }
 
-.vgcomments_alert {
+.vg-composer__toolbar {
+    @apply flex flex-wrap items-center justify-between gap-2 border-t px-2 py-2;
+    border-color: var(--vg-border);
+    background: var(--vg-soft);
+}
 
-    @apply pointer-events-none z-50 fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6;
+.vg-composer__tools {
+    @apply flex flex-wrap items-center gap-0.5;
+}
 
-    .vg__container {
-        @apply flex w-full flex-col items-center space-y-4 sm:items-end;
+.vg-composer__formats,
+.vg-composer__media {
+    @apply relative inline-flex items-center gap-0.5;
+}
 
-        .enter {
-            @apply transform ease-out duration-300 transition;
-        }
+.vg-composer__sep {
+    @apply mx-1 hidden h-5 w-px bg-gray-300 sm:inline-block;
+}
 
-        .enter_start {
-            @apply translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2;
-        }
+.vg-discussion-bar {
+    @apply mb-4 flex items-center justify-between gap-3 border-b pb-2;
+    border-color: var(--vg-border);
+}
 
-        .enter_end {
-            @apply translate-y-0 opacity-100 sm:translate-x-0;
-        }
+.vg-discussion-bar__title {
+    @apply text-base font-semibold text-gray-900;
+}
 
-        .leave {
-            @apply transition ease-in duration-100;
-        }
+.vg-discussion-bar__sort {
+    @apply inline-flex items-center gap-2 text-xs font-medium text-gray-600;
 
-        .start {
-            @apply opacity-100;
-        }
-
-        .end {
-            @apply opacity-0;
-        }
-
-
-        .vg__body {
-            @apply pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5;
-
-            .vg__content {
-                @apply flex items-start;
-
-                .vg__message {
-                    @apply ml-3 w-0 flex-1 pt-0.5;
-
-                    .vg__message_p_cap {
-                        @apply text-sm font-medium text-gray-900 capitalize;
-                    }
-
-                    .vg__message_p_mess {
-                        @apply mt-1 text-sm text-gray-500;
-                    }
-                }
-
-                .vg_toolkit {
-                    @apply ml-4 flex flex-shrink-0;
-                }
-
-                .vg_icon_success {
-                    @apply h-6 w-6 text-green-400;
-                }
-
-                .vg_icon_warning {
-                    @apply h-6 w-6 text-orange-300;
-                }
-
-                .vg_icon_danger {
-                    @apply h-6 w-6 text-red-600;
-                }
-            }
-        }
+    select {
+        @apply rounded-md border border-gray-300 bg-white py-1 pl-2 pr-8 text-sm text-gray-800;
     }
 }
 
-.vgcomment_modal {
-    @apply relative z-10;
+.vg-list {
+    @apply space-y-0;
+}
 
-    .modal__background {
-        @apply fixed inset-0 bg-gray-100 bg-opacity-75 transition-opacity;
+.vg-empty {
+    @apply rounded-lg border border-dashed px-4 py-8 text-center text-sm text-gray-500;
+    border-color: var(--vg-border);
+}
 
-        .enter {
-            @apply ease-out duration-300;
-        }
+.vg-comment {
+    @apply py-3;
+}
 
-        .enter_start {
-            @apply opacity-0;
-        }
+.vg-comment__layout {
+    @apply flex gap-3;
+}
 
-        .enter_end {
-            @apply opacity-100;
-        }
+.vg-comment__avatar img {
+    @apply h-10 w-10 rounded-full object-cover ring-1 ring-gray-200;
+}
 
-        .leave {
-            @apply ease-in duration-200;
-        }
+.vg-comment__main {
+    @apply min-w-0 flex-1;
+}
 
-        .leave_start {
-            @apply opacity-100;
-        }
+.vg-comment__header {
+    @apply mb-1 flex items-start justify-between gap-2;
+}
 
-        .leave_end {
-            @apply opacity-0;
-        }
-    }
+.vg-comment__meta {
+    @apply flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs;
+}
 
-    .modal__container {
-        @apply fixed inset-0 z-10 overflow-y-auto;
+.vg-comment__author {
+    @apply text-sm font-semibold text-gray-900;
+}
 
-        .modal__card {
-            @apply flex items-end justify-center p-4 text-center sm:items-center sm:p-0;
+.vg-comment__replying {
+    @apply text-gray-500;
+}
 
-            .enter {
-                @apply ease-out duration-300;
-            }
+.vg-comment__sep {
+    @apply text-gray-300;
+}
 
-            .enter_start {
-                @apply opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95;
-            }
+.vg-comment__time {
+    @apply text-gray-500;
+}
 
-            .enter_end {
-                @apply opacity-100 translate-y-0 sm:scale-100;
-            }
+.vg-comment__body {
+    @apply text-sm leading-relaxed text-gray-800;
+    @include comment__formatter;
 
-            .leave {
-                @apply ease-in duration-200;
-            }
-
-            .leave_start {
-                @apply opacity-100 translate-y-0 sm:scale-100;
-            }
-
-            .leave_end {
-                @apply opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95;
-            }
-
-            .card__body {
-                @apply relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-screen-lg sm:p-6;
-
-                .image {
-                    @apply object-contain min-w-[200px] w-full;
-                }
-            }
-        }
+    /* Must beat global img:not(...) max-width:100% (higher specificity). */
+    img {
+        max-width: min(100%, 20rem) !important;
+        max-height: 240px !important;
+        width: auto !important;
+        height: auto !important;
+        object-fit: contain;
+        border-radius: 0.375rem;
     }
 }
 
-.vgcomments_confirm {
-    @apply relative z-10;
+.vg-comment__attachments {
+    @apply mt-2 flex flex-wrap gap-2;
+}
 
-    .vgcomments_confirm-over {
-        @apply fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity;
+.vg-file {
+    @apply inline-flex max-w-full items-center gap-2 rounded-md border border-gray-200 bg-gray-50 px-2 py-1.5 text-xs font-medium text-gray-700;
+
+    &--chip {
+        @apply relative max-w-xs pr-7 hover:bg-gray-100;
     }
 
-    .vgcomments_confirm-container {
-        @apply fixed inset-0 z-10 overflow-y-auto;
+    &__thumb {
+        width: 3rem;
+        height: 3rem;
+        max-width: 3rem;
+        max-height: 3rem;
+        @apply shrink-0 rounded object-cover;
+    }
 
-        .vgcomments_confirm-container-content {
-            @apply flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0;
+    &__icon {
+        @apply inline-flex h-12 w-12 shrink-0 items-center justify-center rounded bg-white text-base;
+    }
 
-            .vgcomments_confirm-container-content-div {
-                @apply relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6;
+    &__meta {
+        @apply min-w-0 flex flex-col leading-tight;
+    }
 
-                .vgcomments_confirm-container-content-div-row {
-                    @apply sm:flex sm:items-start;
+    &__name {
+        @apply truncate max-w-[10rem];
+    }
 
-                    .vgcomments_confirm-container-content-div-row-icon {
-                        @apply mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10;
-                    }
+    &__size {
+        @apply text-[11px] font-normal text-gray-500;
+    }
 
-                    .vgcomments_confirm-container-content-div-row-text {
-                        @apply mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left;
+    &__remove {
+        @apply absolute right-1 top-1 inline-flex h-5 w-5 items-center justify-center rounded text-base leading-none text-gray-500 hover:bg-gray-200 hover:text-gray-900;
+    }
 
-                        .vgcomments_confirm-container-content-div-row-text-title {
-                            @apply text-lg font-medium leading-6 text-gray-900;
+    /* Beat global img max-width/height:auto so chips stay ~48px. */
+    img,
+    img.vg-file__thumb {
+        width: 3rem;
+        height: 3rem;
+        max-width: 3rem;
+        max-height: 3rem;
+        @apply shrink-0 rounded object-cover;
+    }
+
+    &--image:not(.vg-file--chip) img {
+        width: auto !important;
+        height: auto !important;
+        max-width: min(100%, 12rem) !important;
+        max-height: 240px !important;
+        object-fit: contain;
+    }
+}
+
+.vg-comment__attachments .vg-file--image img {
+    width: auto !important;
+    height: auto !important;
+    max-width: min(100%, 12rem) !important;
+    max-height: 240px !important;
+    object-fit: contain;
+}
+
+.vg-comment__footer {
+    @apply mt-2 flex flex-wrap items-center justify-between gap-2;
+}
+
+.vg-reactions {
+    @apply relative flex flex-wrap items-center gap-1.5;
+}
+
+.vg-reaction-pill {
+    @apply inline-flex items-center gap-1 rounded-full border border-gray-200 bg-white px-2 py-0.5 text-sm hover:border-sky-300 hover:bg-sky-50;
+
+    &__count { @apply text-xs font-semibold tabular-nums text-gray-600; }
+}
+
+.vg-reaction-add {
+    @apply relative inline-flex;
+}
+
+.vg-reaction-popover {
+    @apply absolute bottom-full left-0 z-20 mb-2 flex gap-0.5 rounded-lg border border-gray-200 bg-white p-1.5 shadow-lg;
+}
+
+.vg-reaction-popover__item {
+    @apply inline-flex h-8 w-8 items-center justify-center rounded-md text-lg hover:bg-gray-100;
+}
+
+.vg-menu {
+    @apply relative;
+}
+
+.vg-menu__panel {
+    @apply absolute right-0 z-30 mt-1 min-w-[10rem] overflow-hidden rounded-md border border-gray-200 bg-white py-1 shadow-lg;
+}
+
+.vg-menu__item {
+    @apply flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-gray-700 hover:bg-gray-50;
+
+    &--danger { @apply text-red-600 hover:bg-red-50; }
+}
+
+/*
+ | GitHub-style nested threads: each .vg-thread adds a left border + indent.
+ | Full padding through ~6–8 levels, then taper so deep recursion stays readable.
+ */
+.vg-thread {
+    --vg-thread-indent: 1rem;
+    margin-top: 0.75rem;
+    border-left: 2px solid #e5e7eb; /* gray-200 */
+    padding-left: var(--vg-thread-indent);
+
+    .vg-thread {
+        --vg-thread-indent: 0.875rem;
+        margin-top: 0.5rem;
+
+        .vg-thread {
+            --vg-thread-indent: 0.75rem;
+
+            .vg-thread {
+                --vg-thread-indent: 0.625rem;
+
+                .vg-thread {
+                    --vg-thread-indent: 0.5rem;
+
+                    .vg-thread {
+                        --vg-thread-indent: 0.5rem;
+
+                        /* Level 7+: keep hierarchy border, minimal extra indent */
+                        .vg-thread {
+                            --vg-thread-indent: 0.375rem;
+
+                            .vg-thread {
+                                --vg-thread-indent: 0.375rem;
+
+                                .vg-thread {
+                                    --vg-thread-indent: 0.25rem;
+                                }
+                            }
                         }
                     }
-
-                    .vgcomments_confirm-icon-danger {
-                        @apply h-6 w-6 text-red-600;
-                    }
-                }
-
-                .vgcomments_confirm-container-content-div-footer {
-                    @apply mt-5 sm:mt-4 sm:flex sm:flex-row-reverse;
-
-                    .vgcomments_confirm-container-content-div-footer-button {
-                        @apply inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm;
-                    }
-
-                    .vgcomments_confirm-container-content-div-footer-button-cancel {
-                        @apply mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm;
-                    }
                 }
             }
         }
     }
 
+    .vg-comment__body img {
+        max-width: min(100%, 20rem) !important;
+        max-height: 200px !important;
+    }
 
+    .vg-thread .vg-thread .vg-comment__body img {
+        max-width: min(100%, 16rem) !important;
+        max-height: 160px !important;
+    }
 }
 
-.vgcomments_loading {
-    @apply inline mr-2 w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600;
+.vg-comment--reply {
+    @apply py-2;
+
+    .vg-comment__avatar img {
+        @apply h-8 w-8;
+    }
 }
 
+.vg-pagination {
+    @apply mt-4;
+}
+
+.vgcomment_box-pagination {
+    @apply flex items-center justify-between;
+
+    .vgcomment_box_pagination-mobile-mode {
+        @apply flex flex-1 justify-between sm:hidden;
+
+        .vgcomment_box_pagination-previous-span {
+            @apply relative inline-flex cursor-default select-none items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium leading-5 text-gray-500;
+        }
+        .vgcomment_box_pagination-next-span {
+            @apply relative ml-3 inline-flex cursor-default select-none items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium leading-5 text-gray-500;
+        }
+
+        .vgcomment_box_pagination-previous-button {
+            @apply relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out hover:text-gray-500 focus:border-blue-300 focus:outline-none active:bg-gray-100 active:text-gray-700;
+        }
+        .vgcomment_box_pagination-next-button {
+            @apply relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out hover:text-gray-500 focus:border-blue-300 focus:outline-none active:bg-gray-100 active:text-gray-700;
+        }
+    }
+
+    .vgcomment_box_pagination-desktop-mode {
+        @apply hidden sm:flex sm:flex-1 sm:items-center sm:justify-between;
+
+        .vgcomment_box_pagination-desktop-mode-title {
+            @apply text-sm leading-5 text-gray-700;
+        }
+
+        .vgcomment_box_pagination-desktop-mode-group {
+            @apply relative z-0 inline-flex rounded-md shadow-sm;
+
+            .vgcomment_box_pagination-desktop-mode-page-link {
+                @apply relative inline-flex cursor-default items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium leading-5 text-gray-500;
+            }
+
+            .vgcomment_box_pagination-desktop-mode-page-link-button {
+                @apply relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium leading-5 text-gray-500 transition duration-150 ease-in-out hover:text-gray-400 focus:z-10 focus:border-blue-300 focus:outline-none active:bg-gray-100 active:text-gray-500;
+            }
+
+            .vgcomment_box_pagination-desktop-mode-page-dot {
+                @apply relative -ml-px inline-flex cursor-default select-none items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium leading-5 text-gray-700;
+            }
+
+            .vgcomment_box_pagination-desktop-mode-page-array-link {
+                @apply relative -ml-px inline-flex cursor-default select-none items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium leading-5 text-gray-500;
+            }
+
+            .vgcomment_box_pagination-desktop-mode-page-array-button {
+                @apply relative -ml-px inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out hover:text-gray-500 focus:z-10 focus:border-blue-300 focus:outline-none active:bg-gray-100 active:text-gray-700;
+            }
+
+            .vgcomment_box_pagination-desktop-mode-page-link-next {
+                @apply relative -ml-px inline-flex cursor-default items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium leading-5 text-gray-500;
+            }
+
+            .vgcomment_box_pagination-desktop-mode-page-link-button-next {
+                @apply relative -ml-px inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium leading-5 text-gray-500 transition duration-150 ease-in-out hover:text-gray-400 focus:z-10 focus:border-blue-300 focus:outline-none active:bg-gray-100 active:text-gray-500;
+            }
+        }
+    }
+}
+
+/* Legacy class bridges */
+.vcomments-box { @apply w-full; }
+.vcomments-list { @apply contents; }
+
+.vgcomment_box { @apply w-full; }
+.vg-comment.is-active { @apply rounded-md ring-2 ring-sky-300; }
+.vg-comment__reply { @apply mt-3; }
+.vg-reaction-pill.is-active { @apply border-sky-300 bg-sky-50; }
+.vg-reaction-popover__item.is-active { @apply bg-sky-50 ring-1 ring-sky-200; }
+
+svg.vgcomemnt_icon-5,
 .vgcomemnt_icon-5 {
-    @apply w-5 h-5;
+    @apply h-5 w-5;
 }
 
+svg.vgcomemnt_icon-4,
 .vgcomemnt_icon-4 {
-    @apply w-4 h-4;
+    @apply h-4 w-4;
 }
 
+svg.vgcomemnt_icon-3,
 .vgcomemnt_icon-3 {
-    @apply w-3 h-3;
+    @apply h-3 w-3;
 }
 
+svg.vgcomemnt_icon-2,
 .vgcomemnt_icon-2 {
-    @apply w-2 h-2;
+    @apply h-2 w-2;
 }
 
 .vgcomment_mr-2 {
@@ -653,4 +636,84 @@ svg:not(.plyr *):not(.plyr) {
 
 .vgcomemnt_text-end {
     @apply text-end;
+}
+
+/* Toast notifications (upload / action feedback) */
+.vg-toast {
+    @apply pointer-events-none fixed inset-0 z-50 flex items-end px-4 py-6 sm:items-start sm:p-6;
+}
+
+.vg-toast__stack {
+    @apply flex w-full flex-col items-center space-y-4 sm:items-end;
+}
+
+.vg-toast__card {
+    @apply pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5;
+}
+
+.vg-toast__body {
+    @apply flex items-start gap-3 p-4;
+}
+
+.vg-toast__icon {
+    @apply shrink-0;
+
+    &--success { @apply text-emerald-500; }
+    &--warning { @apply text-amber-500; }
+    &--danger { @apply text-red-600; }
+}
+
+.vg-toast__text {
+    @apply min-w-0 flex-1 pt-0.5;
+}
+
+.vg-toast__title {
+    @apply text-sm font-semibold capitalize text-gray-900;
+}
+
+.vg-toast__message {
+    @apply mt-0.5 text-sm text-gray-600;
+}
+
+.vg-toast__close {
+    @apply inline-flex shrink-0 rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700;
+}
+
+.vg-toast__enter {
+    @apply transform transition duration-300 ease-out;
+}
+
+.vg-toast__enter-start {
+    @apply translate-y-2 opacity-0 sm:translate-x-2 sm:translate-y-0;
+}
+
+.vg-toast__enter-end {
+    @apply translate-x-0 translate-y-0 opacity-100;
+}
+
+.vg-toast__leave {
+    @apply transition duration-100 ease-in;
+}
+
+.vg-toast__leave-start {
+    @apply opacity-100;
+}
+
+.vg-toast__leave-end {
+    @apply opacity-0;
+}
+
+/* Legacy alert class bridge (older markup / events) */
+.vgcomments_alert {
+    @apply pointer-events-none fixed inset-0 z-50 flex items-end px-4 py-6 sm:items-start sm:p-6;
+}
+
+.vg-toast__icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.vg-toast__close svg {
+    width: 1.25rem;
+    height: 1.25rem;
 }

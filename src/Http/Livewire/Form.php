@@ -39,12 +39,29 @@ class Form extends Component
     #[Locked]
     public $pageId = null;
 
-    public $preview;
+    public $previewHtml = '';
+
+    public bool $showingPreview = false;
 
     public $editId;
 
+    public string $formKey = '';
+
     public function mount(): void
     {
+        $this->formKey = $this->formKey !== '' ? $this->formKey : (string) Str::uuid();
+
+        // Nested reply forms pass only root_id/parent_id — merge so content/author keys stay intact.
+        $this->request = array_merge([
+            'content' => '',
+            'author_name' => null,
+            'author_email' => null,
+            'author_url' => null,
+            'root_id' => null,
+            'parent_id' => null,
+            'recaptcha_token' => null,
+        ], $this->request ?? []);
+
         if ($this->editId) {
             $this->method = 'edit';
             $this->request['content'] = CommentServiceFacade::findById((int) $this->editId)?->content;
@@ -88,7 +105,8 @@ class Form extends Component
 
         $this->request['content'] = '';
         $this->request['recaptcha_token'] = '';
-        $this->reset('preview', 'attachments');
+        $this->showingPreview = false;
+        $this->reset('previewHtml', 'attachments');
 
         $this->dispatch('post-success-comments');
     }
@@ -108,7 +126,8 @@ class Form extends Component
         CommentServiceFacade::update($this->request, $comment->uuid);
 
         $this->request['content'] = '';
-        $this->reset('preview', 'editId');
+        $this->showingPreview = false;
+        $this->reset('previewHtml', 'editId');
 
         $this->dispatch('post-success-comments');
     }
@@ -125,16 +144,27 @@ class Form extends Component
             return false;
         }
 
-        foreach ($files as $file) {
-            $this->dispatch('insert-content-'.$id, $file);
-        }
+        // Single event with the full batch so the Alpine form can keep
+        // insert-vs-attach mode consistent across every uploaded file.
+        $this->dispatch('insert-content-'.$id, ['files' => array_values($files)]);
 
         return $files;
     }
 
-    public function preview(): void
+    public function preview(?string $content = null): void
     {
-        $this->preview = FormatterFacade::render($this->parse());
+        if ($content !== null) {
+            $this->request['content'] = $content;
+        }
+
+        $parsed = FormatterFacade::parse((string) ($this->request['content'] ?? ''));
+        $this->previewHtml = FormatterFacade::render($parsed) ?: '';
+        $this->showingPreview = true;
+    }
+
+    public function closePreview(): void
+    {
+        $this->showingPreview = false;
     }
 
     public function cancel(): void
