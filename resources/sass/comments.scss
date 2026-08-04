@@ -6,22 +6,35 @@
 @import 'highlight.js/styles/vs2015.css';
 
 /*
- | Plyr ships bare `svg` / `img` rules that leak into the host app
- | (Jetstream nav icons, logos, etc.). Revert those globals and keep
- | player sizing under `.plyr`.
+ | Plyr ships bare `svg` / `img` rules that leak into the host app.
+ | Revert globals WITHOUT forcing fill (outline Heroicons use fill="none"
+ | + stroke; fill:currentColor turns them into solid blobs).
  */
-img {
+img:not(.plyr *):not(.plyr) {
     max-width: 100%;
     height: auto;
 }
 
-svg:not(.plyr svg):not(.plyr *) {
-    width: auto;
-    height: auto;
+svg:not(.plyr *):not(.plyr) {
+    width: unset;
+    height: unset;
     max-width: none;
     display: inline-block;
-    fill: currentColor;
+    /* Do not set fill — outline Heroicons need fill="none" from the SVG attribute.
+       CSS fill (even unset) inherits currentColor and turns icons into solid blobs. */
     pointer-events: auto;
+}
+
+/* Heroicons size the wrapper span; SVG must fill it */
+.svg-icon {
+    line-height: 0;
+    vertical-align: middle;
+}
+
+.svg-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
 .plyr svg,

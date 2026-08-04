@@ -156,13 +156,10 @@ class Comments extends Component
         }
     }
 
-    public function listenCommentPosted($result): void
+    public function listenCommentPosted($result = null): void
     {
-        if (! $result) {
-            return;
-        }
-
         $this->reset('editId');
+        $this->resetPage('vgcomment_page');
     }
 
     public function listenCancelEdit(): void

@@ -90,7 +90,7 @@ class Form extends Component
         $this->request['recaptcha_token'] = '';
         $this->reset('preview', 'attachments');
 
-        $this->dispatch('post-success-comments', $result);
+        $this->dispatch('post-success-comments');
     }
 
     public function edit(): void
@@ -110,7 +110,7 @@ class Form extends Component
         $this->request['content'] = '';
         $this->reset('preview', 'editId');
 
-        $this->dispatch('post-success-comments', $comment);
+        $this->dispatch('post-success-comments');
     }
 
     public function uploadFile(string $id)
