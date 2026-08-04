@@ -24,7 +24,7 @@ class CommentsComponent extends Component
         'order' => 'latest',
     ];
 
-    public bool $loading = true;
+    public bool $loading = false;
 
     protected function getListeners(): array
     {

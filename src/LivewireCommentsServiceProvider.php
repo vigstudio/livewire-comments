@@ -51,16 +51,11 @@ class LivewireCommentsServiceProvider extends ServiceProvider
     protected function registerBladeDirectives()
     {
         Blade::directive('commentStyles', function ($expression) {
-            $style = '<link href="' . asset('vendor/livewire-comments/css/comments.css') . '?v=' . date('YmdHs') . '" rel="stylesheet">';
-
-            return $style;
+            return "<?php echo '<link href=\"'.e(asset('vendor/livewire-comments/css/comments.css')).'?v='.e(@filemtime(public_path('vendor/livewire-comments/css/comments.css')) ?: time()).'\" rel=\"stylesheet\">'; ?>";
         });
 
         Blade::directive('commentScripts', function ($expression) {
-            $script  =  '<script src="https://www.google.com/recaptcha/api.js?render=' . Config::get('vgcomment.recaptcha_key') . '"></script>';
-            $script .= '<script src="' . asset('vendor/livewire-comments/js/comments.js') . '?v=' . date('YmdHs') . '"></script>';
-
-            return $script;
+            return "<?php \$script = '<script src=\"https://www.google.com/recaptcha/api.js?render='.e(\\Illuminate\\Support\\Facades\\Config::get('vgcomment.recaptcha_key')).'\"></script>'; \$script .= '<script src=\"'.e(asset('vendor/livewire-comments/js/comments.js')).'?v='.e(@filemtime(public_path('vendor/livewire-comments/js/comments.js')) ?: time()).'\"></script>'; echo \$script; ?>";
         });
     }
 

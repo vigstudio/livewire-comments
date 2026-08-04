@@ -1,6 +1,7 @@
-<div class="vgcomment_box" wire:init.defer.500ms="deferLoading('comments')">
+<div class="vgcomment_box" wire:init="deferLoading">
 
     @if ($loading)
+        <div class="p-6 text-sm text-gray-500">Loading comments…</div>
     @else
         <div wire:ignore>
             <x-livewire-comments::modal />

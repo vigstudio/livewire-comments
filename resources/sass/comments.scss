@@ -231,10 +231,18 @@
     @apply mb-4 w-full bg-gray-50 rounded-lg border border-gray-200;
 
     .vcomments__form__guest {
-        @apply flex py-2 px-3 border-b text-sm font-medium;
+        @apply flex flex-wrap gap-2 py-2 px-3 border-b text-sm font-medium;
 
         .vgcomments__form__guest__input {
-            @apply block w-full py-1.5 rounded-md border-0 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder:text-gray-400 ml-4 ;
+            @apply block w-full py-1.5 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder:text-gray-400;
+
+            &.validate-error {
+                @apply border-2 border-red-300;
+            }
+        }
+
+        .vgcomments_alert_required_text {
+            @apply block mt-1 text-sm text-red-600;
         }
     }
 
@@ -271,12 +279,12 @@
             }
         }
 
-        .vgcomments_alert_required {
+        &.vgcomments_alert_required {
             @apply border border-red-600;
         }
 
         .vgcomments_alert_required_text {
-            @apply text-sm text-red-600;
+            @apply block mt-1 text-sm text-red-600;
         }
 
     }

@@ -267,11 +267,15 @@ window.LivewireComments = {},
         }
     };
 
-window.Livewire.on('alert', data => {
-    const type = data[0].toString();
-    const message = data[1].toString();
+document.addEventListener('livewire:init', () => {
+    Livewire.on('alert', (event) => {
+        const type = (event?.type ?? event?.[0] ?? 'alert').toString();
+        const message = (event?.message ?? event?.[1] ?? '').toString();
 
-    window.dispatchEvent(new CustomEvent('alert-js', {detail: {type: type, title: type, message: message}}));
+        window.dispatchEvent(new CustomEvent('alert-js', {
+            detail: { type, title: type, message },
+        }));
+    });
 });
 
 function useTrackedPointer() {

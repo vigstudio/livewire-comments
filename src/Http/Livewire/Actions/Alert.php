@@ -8,7 +8,7 @@ trait Alert
     {
         if (session()->has('alert')) {
             foreach (session('alert') as $alert) {
-                $this->dispatch('alert', $alert[0], $alert[1]);
+                $this->dispatch('alert', type: $alert[0], message: $alert[1]);
             }
             session()->forget('alert');
         }
