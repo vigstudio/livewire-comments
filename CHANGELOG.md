@@ -2,6 +2,10 @@
 
 All notable changes to `livewire-comments` will be documented in this file
 
+## 2.0.6 - 2026-08-04
+
+- Fix Livewire image upload crashing after temp upload (`array_values()` on FileResource collection), which surfaced as a CSRF/419 “page expired” dialog
+
 ## 2.0.5 - 2026-08-04
 
 - Version bump aligned with vgcomments 2.0.5 StopForumSpam / store-message hotfix

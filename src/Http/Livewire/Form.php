@@ -144,11 +144,15 @@ class Form extends Component
             return false;
         }
 
+        // CommentService::upload returns a FileResource collection — resolve to
+        // plain arrays for the Alpine afterUpload handler / attachments binding.
+        $payload = array_values($files->resolve());
+
         // Single event with the full batch so the Alpine form can keep
         // insert-vs-attach mode consistent across every uploaded file.
-        $this->dispatch('insert-content-'.$id, ['files' => array_values($files)]);
+        $this->dispatch('insert-content-'.$id, ['files' => $payload]);
 
-        return $files;
+        return $payload;
     }
 
     public function preview(?string $content = null): void
