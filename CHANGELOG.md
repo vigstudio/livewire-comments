@@ -2,6 +2,12 @@
 
 All notable changes to `livewire-comments` will be documented in this file
 
+## 2.0.9 - 2026-08-05
+
+- Add upvote/downvote controls via Livewire `vote` action
+- Improve attachment image lightbox handling
+- Improve comment card borders and markdown prose (quotes, code blocks)
+
 ## 2.0.7 - 2026-08-04
 
 - Fix upload event payload shape: dispatch named `files:` so Alpine gets real FileResource metadata (image thumbnails / filenames)

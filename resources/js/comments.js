@@ -470,15 +470,55 @@ window.LivewireComments.comment = function (uuid) {
     };
 };
 
+function lightboxSrcFromEventTarget(target) {
+    if (!target || !target.closest) {
+        return null;
+    }
+
+    // Composer chip thumbs are not lightbox targets.
+    if (target.closest('.vg-file--chip, .vg-composer')) {
+        return null;
+    }
+
+    if (target.closest('.vg-comment__avatar')) {
+        return null;
+    }
+
+    const img = target.closest('.vg-comment__body img, a.vg-file--image img, .vg-file--image img');
+    if (!img || img.classList.contains('vg-file__thumb')) {
+        return null;
+    }
+
+    return img.currentSrc || img.src || null;
+}
+
+function openLightboxModal(src) {
+    if (!src) {
+        return;
+    }
+
+    window.dispatchEvent(new CustomEvent('lightbox-modal', {detail: {src}}));
+}
+
+// Capture phase so attachment <a target=_blank> links don't navigate away.
+document.addEventListener('click', (event) => {
+    if (event.target.closest('[data-vgcomments-blade]')) {
+        return;
+    }
+
+    const src = lightboxSrcFromEventTarget(event.target);
+    if (!src) {
+        return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    openLightboxModal(src);
+}, true);
+
 window.LivewireComments.content = function () {
     return {
         init() {
-            this.$el.querySelectorAll('img').forEach((img) => {
-                img.addEventListener('click', function () {
-                    window.dispatchEvent(new CustomEvent('lightbox-modal', {detail: this}));
-                });
-            });
-
             this.$el.querySelectorAll('.vgcomments-player').forEach((video) => {
                 new Plyr(video, {});
             });

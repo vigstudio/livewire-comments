@@ -118,6 +118,41 @@
             @endif
 
             <footer class="vg-comment__footer">
+                <div class="vg-comment__toolbar">
+                @if ((bool) (vgcomment_config()['votes_enabled'] ?? true))
+                    @php
+                        $upvotes = (int) ($comment->upvotes ?? 0);
+                        $downvotes = (int) ($comment->downvotes ?? 0);
+                        $score = $upvotes - $downvotes;
+                        $userVote = $comment->user_vote;
+                    @endphp
+                    <div class="vg-votes">
+                        <button
+                            type="button"
+                            class="vg-vote-btn {{ $userVote === 1 ? 'is-active is-up' : '' }}"
+                            wire:click="vote('{{ $comment->uuid }}', 1)"
+                            wire:loading.attr="disabled"
+                            title="{{ __('vgcomment::comment.upvote') }}"
+                            aria-label="{{ __('vgcomment::comment.upvote') }}"
+                            aria-pressed="{{ $userVote === 1 ? 'true' : 'false' }}"
+                        >
+                            <x-heroicons::icon name="chevron-up-o" class="vg-icon" />
+                        </button>
+                        <span class="vg-vote-score" title="{{ $upvotes }} ↑ · {{ $downvotes }} ↓">{{ $score }}</span>
+                        <button
+                            type="button"
+                            class="vg-vote-btn {{ $userVote === -1 ? 'is-active is-down' : '' }}"
+                            wire:click="vote('{{ $comment->uuid }}', -1)"
+                            wire:loading.attr="disabled"
+                            title="{{ __('vgcomment::comment.downvote') }}"
+                            aria-label="{{ __('vgcomment::comment.downvote') }}"
+                            aria-pressed="{{ $userVote === -1 ? 'true' : 'false' }}"
+                        >
+                            <x-heroicons::icon name="chevron-down-o" class="vg-icon" />
+                        </button>
+                    </div>
+                @endif
+
                 <div class="vg-reactions">
                     @foreach ($reactionsGrouped as $type => $group)
                         @php
@@ -142,6 +177,7 @@
                             <x-heroicons::icon name="face-smile-o" class="vg-icon" />
                         </button>
                     </div>
+                </div>
                 </div>
 
                 <button type="button" class="vg-text-btn" @click="reply = !reply">

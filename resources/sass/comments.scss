@@ -262,7 +262,7 @@ svg.vg-icon {
 }
 
 .vg-list {
-    @apply space-y-0;
+    @apply space-y-3;
 }
 
 .vg-empty {
@@ -270,8 +270,10 @@ svg.vg-icon {
     border-color: var(--vg-border);
 }
 
+/* GitHub-ish comment cards — framed so threads don’t blend together */
 .vg-comment {
-    @apply py-3;
+    @apply rounded-md border bg-white px-3 py-3;
+    border-color: var(--vg-border);
 }
 
 .vg-comment__layout {
@@ -395,6 +397,30 @@ svg.vg-icon {
     @apply mt-2 flex flex-wrap items-center justify-between gap-2;
 }
 
+.vg-comment__toolbar {
+    @apply flex flex-wrap items-center gap-2;
+}
+
+.vg-votes {
+    @apply inline-flex items-center gap-0.5 rounded-md border border-gray-200 bg-white px-0.5 py-0.5;
+}
+
+.vg-vote-btn {
+    @apply inline-flex h-7 w-7 items-center justify-center rounded text-gray-500 hover:bg-gray-50 hover:text-sky-600;
+
+    &.is-active.is-up {
+        @apply text-emerald-600 bg-emerald-50;
+    }
+
+    &.is-active.is-down {
+        @apply text-rose-600 bg-rose-50;
+    }
+}
+
+.vg-vote-score {
+    @apply min-w-[1.25rem] px-0.5 text-center text-xs font-semibold tabular-nums text-gray-700;
+}
+
 .vg-reactions {
     @apply relative flex flex-wrap items-center gap-1.5;
 }
@@ -487,10 +513,20 @@ svg.vg-icon {
 }
 
 .vg-comment--reply {
-    @apply py-2;
+    @apply px-2.5 py-2;
 
     .vg-comment__avatar img {
         @apply h-8 w-8;
+    }
+}
+
+/* Nested reply cards: lighter frame so parent + thread rail don’t feel double-heavy */
+.vg-thread > .vg-comment {
+    border-color: #eaeef2;
+    background: #fafbfc;
+
+    + .vg-comment {
+        margin-top: 0.5rem;
     }
 }
 
@@ -716,4 +752,69 @@ svg.vgcomemnt_icon-2,
 .vg-toast__close svg {
     width: 1.25rem;
     height: 1.25rem;
+}
+
+/* Clickable comment / attachment images */
+.vg-comment__body img,
+.vg-comment__attachments .vg-file--image img {
+    cursor: zoom-in;
+}
+
+/* Lightbox overlay (shared visual language with Blade) */
+.vg-lightbox {
+    @apply fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8;
+
+    &[hidden] {
+        display: none !important;
+    }
+}
+
+.vg-lightbox__backdrop {
+    @apply absolute inset-0 bg-black/75;
+}
+
+.vg-lightbox__panel {
+    @apply relative z-10 flex max-h-full max-w-5xl flex-col;
+}
+
+.vg-lightbox__close {
+    @apply absolute -right-1 -top-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:-right-10 sm:top-0;
+
+    svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+}
+
+.vg-lightbox__image {
+    @apply max-h-[85vh] max-w-full rounded-md object-contain shadow-2xl;
+    width: auto !important;
+    height: auto !important;
+    cursor: default;
+}
+
+/* Alpine modal component */
+.vgcomment_modal {
+    .modal__background {
+        @apply fixed inset-0 z-[100] bg-black/75;
+    }
+
+    .modal__container {
+        @apply fixed inset-0 z-[101] flex items-center justify-center p-4 sm:p-8 pointer-events-none;
+    }
+
+    .modal__card {
+        @apply pointer-events-auto relative max-h-full max-w-5xl;
+    }
+
+    .card__body {
+        @apply relative;
+    }
+
+    .card__body .image {
+        @apply max-h-[85vh] max-w-full rounded-md object-contain shadow-2xl;
+        width: auto !important;
+        height: auto !important;
+        cursor: default;
+    }
 }

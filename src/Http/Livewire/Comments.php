@@ -111,6 +111,11 @@ class Comments extends Component
         CommentServiceFacade::reaction($uuid, $type);
     }
 
+    public function vote(string $uuid, int $value): void
+    {
+        CommentServiceFacade::vote($uuid, $value);
+    }
+
     public function edit($id): bool
     {
         if (! $this->checkPermission($id, 'update')) {
